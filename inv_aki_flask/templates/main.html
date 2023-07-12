@@ -9,10 +9,10 @@ Message
 {% endblock %}
 
 {% block content %}
-<div class="logout"><a href="/main/logout">Logout</a></div>
+<div class="logout"><a href="{{ url_for('login.logout') }}">Logout</a></div>
 <p>{{ message }}</p>
 
-<form method="post" action="/main/">
+<form method="post" action="{{ url_for('main.post') }}">
 <table>
     <tr>
         <th>Message</th>
@@ -31,8 +31,4 @@ Message
     <li>{{item[1]}} {{item[0]}}</li>
     {% endfor %}
 </ul>
-{% endblock %}
-
-{% block footer %}
-copyright 2023 tkomota
 {% endblock %}

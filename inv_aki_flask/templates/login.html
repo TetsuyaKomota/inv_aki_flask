@@ -10,12 +10,12 @@ Login
 
 {% block content %}
 <p>{{ message }}</p>
-<form method="post" action="/main/login">
+<form method="post" action="{{ url_for('login.post') }}">
 <table>
     <tr>
         <th>ID</th>
         <td>
-            <input type="text" name="id" value="{{id}}">
+            <input type="text" name="id" value="{{ id }}">
         </td>
     </tr>
     <tr>
@@ -30,8 +30,4 @@ Login
     </td>
 </table>
 </form>
-{% endblock %}
-
-{% block footer %}
-copyright 2021 tkomota
 {% endblock %}
