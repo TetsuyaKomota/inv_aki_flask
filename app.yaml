@@ -1,0 +1,12 @@
+runtime: python39
+env: standard
+instance_class: F1
+service: default
+entrypoint: gunicorn --workers 1 --threads 8 inv_aki_flask.app:app
+automatic_scaling:
+  max_instances: 1
+  max_idle_instances: 1
+  min_instances: 0
+  min_idle_instances: 0
+  min_pending_latency: 3000ms
+  max_pending_latency: automatic
