@@ -9,6 +9,7 @@ packages = [{include = "inv_aki_flask"}]
 [tool.poetry.dependencies]
 python = "^3.9"
 flask = "^2.3.2"
+gunicorn = "^20.1.0"
 
 [tool.poetry.scripts]
 inv_aki_flask = 'inv_aki_flask.app:launch_for_local'
