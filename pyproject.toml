@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "inv-aki-flask"
+version = "0.1.0"
+description = "Inverse Akinator Game for Web"
+authors = ["komot <komotaymkty@gmail.com>"]
+readme = "README.md"
+packages = [{include = "inv_aki_flask"}]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+
+[tool.poetry.scripts]
+inv_aki_flask = 'inv_aki_flask.app:main'
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
