@@ -8,9 +8,10 @@ packages = [{include = "inv_aki_flask"}]
 
 [tool.poetry.dependencies]
 python = "^3.9"
+flask = "^2.3.2"
 
 [tool.poetry.scripts]
-inv_aki_flask = 'inv_aki_flask.app:main'
+inv_aki_flask = 'inv_aki_flask.app:launch_for_local'
 
 [build-system]
 requires = ["poetry-core"]
