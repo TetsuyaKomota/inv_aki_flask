@@ -1,0 +1,33 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Login
+{% endblock %}
+
+{% block headline %}
+{{ title }}
+{% endblock %}
+
+{% block content %}
+<p>{{ message }}</p>
+<form method="post" action="{{ url_for('login.post') }}">
+<table>
+    <tr>
+        <th>ID</th>
+        <td>
+            <input type="text" name="id" value="{{ id }}">
+        </td>
+    </tr>
+    <tr>
+        <th>password</th>
+        <td>
+            <input type="password" name="pass">
+        </td>
+    </tr>
+    <th></th>
+    <td>
+        <input type="submit" value="Login">
+    </td>
+</table>
+</form>
+{% endblock %}

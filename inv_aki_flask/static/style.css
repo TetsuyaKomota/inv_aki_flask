@@ -1,0 +1,33 @@
+body {
+    margin: 10px;
+    background-color: aliceblue;
+}
+h1 {
+    color: lightsteelblue;
+    font-size: 36pt; 
+    margin: 0px;
+}
+p {
+    font-size: 14pt; 
+}
+
+div.footer {
+    text-align: right;
+    border-bottom: 1px solid lightskyblue;
+    color: lightskyblue;
+    margin: 50px 0px;
+}
+
+div.logout {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    font-weight: bold;
+    font-size: 12pt; 
+}
+
+pre {
+    background-color: white;
+    font-size: 12pt;
+    padding: 10px;
+}
