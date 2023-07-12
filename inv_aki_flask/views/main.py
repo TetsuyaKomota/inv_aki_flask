@@ -26,6 +26,7 @@ def show():
 def post():
     global message_data
     msg = request.form.get("comment")
-    message_data.append((session["id"], msg))
+    typ = request.form.get("action")[:-2]
+    message_data.append((session["id"], typ + ":" + msg))
     message_data = message_data[-25:]
     return redirect(url_for("main.show"))
