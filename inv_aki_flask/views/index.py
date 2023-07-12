@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from flask import Blueprint, render_template
 
 view = Blueprint("index", __name__, url_prefix="/")
@@ -5,4 +7,5 @@ view = Blueprint("index", __name__, url_prefix="/")
 
 @view.route("/", methods=["GET"])
 def show():
-    return render_template("index.html", name="APP ENGINE")
+    yyyymmdd = datetime.now().strftime("%Y%m%d")
+    return render_template("index.html", name=yyyymmdd)
