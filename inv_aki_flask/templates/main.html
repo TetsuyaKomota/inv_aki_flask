@@ -1,10 +1,38 @@
-<html>
-<head>
-    <title>メイン画面<</title>
-</head>
-<body>
-    <h2>メイン画面</h2>
-    <p>ここはメイン画面です</p>
-    <p><a href="{{ url_for('index.show') }}">最初のページに戻る</a></p>
-</body>
-</html>
+{% extends "layout.html" %}
+
+{% block title %}
+Message
+{% endblock %}
+
+{% block headline %}
+{{ title }}
+{% endblock %}
+
+{% block content %}
+<div class="logout"><a href="/main/logout">Logout</a></div>
+<p>{{ message }}</p>
+
+<form method="post" action="/main/">
+<table>
+    <tr>
+        <th>Message</th>
+        <td>
+            <input type="text" name="comment" width="80">
+        </td>
+    </tr>
+    <td>
+        <input type="submit" value="POST NOW!!!!">
+    </td>
+</table>
+</form>
+
+<ul>
+    {% for item in data | reverse %}
+    <li>{{item[1]}} {{item[0]}}</li>
+    {% endfor %}
+</ul>
+{% endblock %}
+
+{% block footer %}
+copyright 2023 tkomota
+{% endblock %}
