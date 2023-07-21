@@ -12,9 +12,14 @@ class ChatGPT:
     def __init__(self, api_key=None, work_preserve=""):
         self.set_api_key(api_key)
 
-        os.makedirs("tmp/log", exist_ok=True)
+        if "LOG_DIR_PATH" in os.environ:
+            log_dir_path = os.environ["LOG_DIR_PATH"]
+        else:
+            log_dir_path = "tmp/log"
+
+        os.makedirs(log_dir_path, exist_ok=True)
         self.log_path = os.path.join(
-            "tmp", "log", f"{datetime.now().strftime('%Y%m%d%H%M%S')}.txt"
+            log_dir_path, f"{datetime.now().strftime('%Y%m%d%H%M%S')}.txt"
         )
         self.work_preserve = work_preserve
         self.prompt_select = self.load_prompt("template_select.txt")
@@ -34,7 +39,7 @@ class ChatGPT:
             f.write(str(text) + "\n")
 
     def load_prompt(self, filename):
-        with open(f"lib/prompt/{filename}", "r", encoding="utf-8") as f:
+        with open(f"inv_aki_flask/lib/prompt/{filename}", "r", encoding="utf-8") as f:
             text = f.read()
         return text
 
