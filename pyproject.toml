@@ -10,6 +10,7 @@ packages = [{include = "inv_aki_flask"}]
 python = "^3.9"
 flask = "^2.3.2"
 gunicorn = "^20.1.0"
+openai = "^0.27.8"
 
 [tool.poetry.scripts]
 inv_aki_flask = 'inv_aki_flask.app:launch_for_local'
