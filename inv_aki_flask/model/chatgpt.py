@@ -45,7 +45,7 @@ class ChatGPT:
                 )
 
                 response = client.access_secret_version(request={"name": name})
-                payload = response.payload.data.decode("utf-8")
+                payload = response.payload.data.decode("utf-8").strip()
                 openai.api_key = payload
                 self.is_active = True
             except Exception as e:
