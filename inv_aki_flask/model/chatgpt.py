@@ -4,6 +4,8 @@ from datetime import datetime
 
 import openai
 
+from inv_aki_flask.model.secret_client import SecretClient
+
 
 class ChatGPT:
     SELECT_MAX_RETRY = 5
@@ -11,6 +13,7 @@ class ChatGPT:
 
     def __init__(self, api_key=None, work_preserve=""):
         self.set_api_key(api_key)
+        self.secret_client = SecretClient(project_id="inv-aki")
 
         if "LOG_DIR_PATH" in os.environ:
             log_dir_path = os.environ["LOG_DIR_PATH"]
@@ -28,11 +31,14 @@ class ChatGPT:
         self.work, self.keyword = self.select_keyword()
 
     def set_api_key(self, api_key=None):
+        self.is_active = False
+
+        if not api_key:
+            api_key = self.secret_client.get_secret("openai_api_key")
+
         if api_key:
             openai.api_key = api_key
             self.is_active = True
-        else:
-            self.is_active = False
 
     def logging(self, text):
         with open(self.log_path, "a", encoding="utf-8") as f:
