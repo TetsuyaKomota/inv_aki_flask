@@ -7,7 +7,7 @@ from flask import Blueprint, render_template
 view = Blueprint("index", __name__, url_prefix="/")
 
 # FIXME SecretManager の検証
-project_id = "inv_aki"
+project_id = "inv-aki"
 secret_id = "hello"
 version_id = "latest"
 client = secretmanager.SecretManagerServiceClient()
