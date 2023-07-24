@@ -3,6 +3,7 @@ import re
 from datetime import datetime
 
 import openai
+from google.cloud import secretmanager
 
 
 class ChatGPT:
@@ -28,11 +29,28 @@ class ChatGPT:
         self.work, self.keyword = self.select_keyword()
 
     def set_api_key(self, api_key=None):
+        self.is_active = False
         if api_key:
             openai.api_key = api_key
             self.is_active = True
         else:
-            self.is_active = False
+            try:
+                # TODO secret参照部分が複数になったら別クラスに分ける
+                project_id = "inv-aki"
+                secret_id = "openai_api_key"
+                version_id = "latest"
+                client = secretmanager.SecretManagerServiceClient()
+                name = (
+                    f"projects/{project_id}/secrets/{secret_id}/versions/{version_id}"
+                )
+
+                response = client.access_secret_version(request={"name": name})
+                payload = response.payload.data.decode("utf-8")
+                openai.api_key = payload
+                self.is_active = True
+            except Exception as e:
+                # TODO ロギングする
+                pass
 
     def logging(self, text):
         with open(self.log_path, "a", encoding="utf-8") as f:
