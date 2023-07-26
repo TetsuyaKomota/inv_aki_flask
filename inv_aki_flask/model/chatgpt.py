@@ -12,8 +12,8 @@ class ChatGPT:
     ANSWER_MAX_RETRY = 3
 
     def __init__(self, api_key=None, work_preserve=""):
-        self.set_api_key(api_key)
         self.secret_client = SecretClient(project_id="inv-aki")
+        self.set_api_key(api_key)
 
         if "LOG_DIR_PATH" in os.environ:
             log_dir_path = os.environ["LOG_DIR_PATH"]
