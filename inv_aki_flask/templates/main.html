@@ -21,8 +21,14 @@ Message
         </td>
     </tr>
     <td>
+        {% if not judged and ans_count < max_count %}
         <input type="submit" name="action" value="質問する">
+        {% endif %}
+
+        {% if not judged %}
         <input type="submit" name="action" value="回答する">
+        {% endif %}
+
         <input type="submit" name="action" value="リセット">
     </td>
 </table>
@@ -30,7 +36,7 @@ Message
 
 <ul>
     {% for item in data | reverse %}
-    <li>{{item[2]}}</li>
+    <li>{{item[2]}} / {{max_count}}</li>
     <li>{{item[0][0]}} : {{item[0][1]}}</li>
     <li>{{item[1][0]}} : {{item[1][1]}}</li>
     {% endfor %}

@@ -1,8 +1,10 @@
 from flask import Blueprint, redirect, render_template, request, session
 
+from inv_aki_flask.model.secret_client import SecretClient
+
 view = Blueprint("login", __name__, url_prefix="/login")
 
-member_data = {}
+secret_client = SecretClient(project_id="inv-aki")
 
 
 @view.route("/", methods=["GET"])
@@ -18,15 +20,10 @@ def show():
 
 @view.route("/", methods=["POST"])
 def post():
-    global member_data
     id = request.form.get("id")
     pswd = request.form.get("pass")
 
-    if id in member_data:
-        session["login"] = pswd == member_data[id]
-    else:
-        member_data[id] = pswd
-        session["login"] = True
+    session["login"] = pswd == secret_client.get_secret("login_pswd")
 
     session["id"] = id
 
