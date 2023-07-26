@@ -36,11 +36,15 @@ def show():
 @view.route("/", methods=["POST"])
 def post():
     msg = request.form.get("comment")
-    typ = request.form.get("action")[:-2]
+    typ = request.form.get("action")
 
-    if typ == "質問":
+    if typ == "リセット":
+        session["messages"] = []
+        return redirect(url_for("main.show"))
+
+    if typ == "質問する":
         ans = model.ask_answer(msg)
-    elif typ == "回答":
+    elif typ == "回答する":
         ans = model.judge(msg)
 
     if "messages" not in session:
@@ -48,7 +52,7 @@ def post():
 
     message_data = session["messages"]
 
-    message_data.append((session["id"], typ + ":" + msg + ":" + ans))
+    message_data.append((session["id"], typ[:-2] + ":" + msg + ":" + ans))
     message_data = message_data[-25:]
 
     session["messages"] = message_data
