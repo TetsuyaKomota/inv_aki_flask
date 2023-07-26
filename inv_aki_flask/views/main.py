@@ -2,7 +2,7 @@ import os
 
 from flask import Blueprint, redirect, render_template, request, session, url_for
 
-from inv_aki_flask.model.chatgpt import ChatGPT
+from inv_aki_flask.model.chatgpt import MAX_QUESTIONS, ChatGPT
 
 view = Blueprint("main", __name__, url_prefix="/main")
 
@@ -28,6 +28,7 @@ def show():
         session["keyword"] = keyword
 
     message_data = session["messages"]
+    judged = "judged" in session
 
     msg = f"Login ID: {session['id']}"
     return render_template(
@@ -35,6 +36,9 @@ def show():
         title="逆アキネイター(仮)",
         message=msg,
         data=message_data,
+        ans_count=len(message_data),
+        max_count=MAX_QUESTIONS,
+        judged=judged,
     )
 
 
@@ -44,9 +48,9 @@ def post():
     typ = request.form.get("action")
 
     if typ == "リセット":
-        del session["messages"]
-        del session["work"]
-        del session["keyword"]
+        for k in ["messages", "work", "keyword", "judged"]:
+            if k in session:
+                del session[k]
         return redirect(url_for("main.show"))
 
     work = session.get("work", "")
@@ -55,6 +59,7 @@ def post():
     if typ == "質問する":
         ans = model.ask_answer(msg, work, keyword)
     elif typ == "回答する":
+        session["judged"] = True
         ans = model.judge(msg, work, keyword)
 
     if "messages" not in session:

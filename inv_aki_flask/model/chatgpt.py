@@ -6,6 +6,8 @@ import openai
 
 from inv_aki_flask.model.secret_client import SecretClient
 
+MAX_QUESTIONS = 3
+
 
 class ChatGPT:
     SELECT_MAX_RETRY = 5
