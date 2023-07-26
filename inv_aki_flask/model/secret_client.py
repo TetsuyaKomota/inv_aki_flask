@@ -9,9 +9,16 @@ class SecretClient:
     def get_secret(self, secret_id, version_id="latest"):
         try:
             name = "/".join(
-                ["projects", project_id, "secrets", secret_id, "versions", version_id]
+                [
+                    "projects",
+                    self.project_id,
+                    "secrets",
+                    secret_id,
+                    "versions",
+                    version_id,
+                ]
             )
-            response = client.access_secret_version(request={"name": name})
+            response = self.client.access_secret_version(request={"name": name})
             payload = response.payload.data.decode("utf-8").strip()
             return payload
 

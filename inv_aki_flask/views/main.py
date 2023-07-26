@@ -6,10 +6,6 @@ from inv_aki_flask.model.chatgpt import ChatGPT
 
 view = Blueprint("main", __name__, url_prefix="/main")
 
-member_data = {}
-
-message_data = []
-
 if os.path.exists("tmp/api_key.txt"):
     with open("tmp/api_key.txt", "r") as f:
         api_key = f.read().strip()
@@ -20,30 +16,60 @@ else:
 
 @view.route("/", methods=["GET"])
 def show():
-    global message_data
-    if "login" in session and session["login"]:
-        msg = f"Login ID: {session['id']}"
-        return render_template(
-            "main.html",
-            title="逆アキネイター(仮)",
-            message=msg,
-            data=message_data,
-        )
-    else:
+    if not session.get("login", False):
         return redirect(url_for("login.show"))
+
+    if "messages" not in session:
+        session["messages"] = []
+
+    if "keyword" not in session:
+        work, keyword = model.select_keyword()
+        session["work"] = work
+        session["keyword"] = keyword
+
+    message_data = session["messages"]
+
+    msg = f"Login ID: {session['id']}"
+    return render_template(
+        "main.html",
+        title="逆アキネイター(仮)",
+        message=msg,
+        data=message_data,
+    )
 
 
 @view.route("/", methods=["POST"])
 def post():
-    global message_data
     msg = request.form.get("comment")
-    typ = request.form.get("action")[:-2]
+    typ = request.form.get("action")
 
-    if typ == "質問":
-        ans = model.ask_answer(msg)
-    elif typ == "回答":
-        ans = model.judge(msg)
+    if typ == "リセット":
+        del session["messages"]
+        del session["work"]
+        del session["keyword"]
+        return redirect(url_for("main.show"))
 
-    message_data.append((session["id"], typ + ":" + msg + ":" + ans))
-    message_data = message_data[-25:]
+    work = session.get("work", "")
+    keyword = session.get("keyword", "")
+
+    if typ == "質問する":
+        ans = model.ask_answer(msg, work, keyword)
+    elif typ == "回答する":
+        ans = model.judge(msg, work, keyword)
+
+    if "messages" not in session:
+        session["messages"] = []
+
+    message_data = session["messages"]
+
+    message_data.append(
+        (
+            (f"アキ{session['id']}", msg),
+            ("ChatGPT", ans),
+            len(message_data) + 1,
+        )
+    )
+
+    session["messages"] = message_data
+
     return redirect(url_for("main.show"))

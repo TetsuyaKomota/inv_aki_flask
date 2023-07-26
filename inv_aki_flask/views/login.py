@@ -4,8 +4,6 @@ view = Blueprint("login", __name__, url_prefix="/login")
 
 member_data = {}
 
-message_data = []
-
 
 @view.route("/", methods=["GET"])
 def show():
