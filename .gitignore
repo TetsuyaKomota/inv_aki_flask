@@ -252,3 +252,4 @@ $RECYCLE.BIN/
 tmp/
 log/
 *gomi*
+*api_key*
