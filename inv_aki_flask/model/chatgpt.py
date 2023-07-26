@@ -28,7 +28,6 @@ class ChatGPT:
         self.prompt_select = self.load_prompt("template_select.txt")
         self.prompt_answer = self.load_prompt("template_answer.txt")
         self.prompt_judge = self.load_prompt("template_judge.txt")
-        self.work, self.keyword = self.select_keyword()
 
     def set_api_key(self, api_key=None):
         self.is_active = False
@@ -63,19 +62,17 @@ class ChatGPT:
                 return work, keyword
         raise Exception(f"キーワードの選択に失敗しました: {keywords}")
 
-    def ask_answer(self, question):
+    def ask_answer(self, question, work, keyword):
         self.logging("----------")
         self.logging("question: " + question)
 
-        text = self.prompt_answer.format(
-            work=self.work, keyword=self.keyword, question=question
-        )
+        text = self.prompt_answer.format(work=work, keyword=keyword, question=question)
 
         for _ in range(ChatGPT.ANSWER_MAX_RETRY):
             res = self.request_to_chatgpt(text)
-            keyword = res.strip().split("\n")[-1]
-            if "返答: " in keyword:
-                answer = re.sub("返答: ", "", keyword)
+            answer = res.strip().split("\n")[-1]
+            if "返答: " in answer:
+                answer = re.sub("返答: ", "", answer)
                 break
         else:
             answer = "分からない"
@@ -84,12 +81,10 @@ class ChatGPT:
 
         return answer
 
-    def judge(self, question):
+    def judge(self, question, work, keyword):
         self.logging("----------")
         self.logging("question: " + question)
-        text = self.prompt_judge.format(
-            work=self.work, keyword1=self.keyword, keyword2=question
-        )
+        text = self.prompt_judge.format(work=work, keyword1=keyword, keyword2=question)
 
         res = self.request_to_chatgpt(text)
         answer = res.strip().split("\n")[-1]
@@ -101,7 +96,7 @@ class ChatGPT:
             [
                 judge,
                 "私が考えていたのは",
-                self.keyword,
+                keyword,
                 "でした！",
             ]
         )

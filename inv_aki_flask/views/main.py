@@ -22,6 +22,11 @@ def show():
     if "messages" not in session:
         session["messages"] = []
 
+    if "keyword" not in session:
+        work, keyword = model.select_keyword()
+        session["work"] = work
+        session["keyword"] = keyword
+
     message_data = session["messages"]
 
     msg = f"Login ID: {session['id']}"
@@ -39,13 +44,18 @@ def post():
     typ = request.form.get("action")
 
     if typ == "リセット":
-        session["messages"] = []
+        del session["messages"]
+        del session["work"]
+        del session["keyword"]
         return redirect(url_for("main.show"))
 
+    work = session.get("work", "")
+    keyword = session.get("keyword", "")
+
     if typ == "質問する":
-        ans = model.ask_answer(msg)
+        ans = model.ask_answer(msg, work, keyword)
     elif typ == "回答する":
-        ans = model.judge(msg)
+        ans = model.judge(msg, work, keyword)
 
     if "messages" not in session:
         session["messages"] = []
