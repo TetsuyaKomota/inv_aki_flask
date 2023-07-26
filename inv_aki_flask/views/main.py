@@ -52,8 +52,13 @@ def post():
 
     message_data = session["messages"]
 
-    message_data.append((session["id"], typ[:-2] + ":" + msg + ":" + ans))
-    message_data = message_data[-25:]
+    message_data.append(
+        (
+            (f"アキ{session['id']}", msg),
+            ("ChatGPT", ans),
+            len(message_data) + 1,
+        )
+    )
 
     session["messages"] = message_data
 
