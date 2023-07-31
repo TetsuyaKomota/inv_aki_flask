@@ -39,8 +39,7 @@ class ChatGPT:
 
         if api_key:
             openai.api_key = api_key
-            # self.is_active = True
-            self.is_active = False  # FIXME 動作検証用
+            self.is_active = True
 
     def logging(self, text):
         with open(self.log_path, "a", encoding="utf-8") as f:
