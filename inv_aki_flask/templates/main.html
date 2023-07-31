@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 
 {% block title %}
-Message
+メイン画面
 {% endblock %}
 
 {% block headline %}
@@ -13,27 +13,31 @@ Message
 <p>{{ message }}</p>
 
 <form method="post" action="{{ url_for('main.post') }}">
-<table>
+<table class="table">
     <tr>
         <th>Message</th>
         <td>
             <input type="text" name="comment" width="80">
         </td>
     </tr>
-    <td>
-        {% if not judged and ans_count < max_count %}
-        <input type="submit" name="action" value="質問する">
-        {% endif %}
-
-        {% if not judged %}
-        <input type="submit" name="action" value="回答する">
-        {% endif %}
-
-        <input type="submit" name="action" value="リセット">
-    </td>
 </table>
+
+{% if not judged and ans_count < max_count %}
+<input type="submit" name="action" value="質問する" class="btn">
+{% endif %}
+
+{% if not judged %}
+<input type="submit" name="action" value="回答する" class="btn">
+{% endif %}
+
+<input type="submit" name="action" value="リセット" class="btn">
+
+
 </form>
 
+<!-- スマホ版のテキスト欄(画像の上に配置) -->
+<div class="row">
+<div class="hidden-md">
 <ul>
     {% for item in data | reverse %}
     <li>{{item[2]}} / {{max_count}}</li>
@@ -41,4 +45,22 @@ Message
     <li>{{item[1][0]}} : {{item[1][1]}}</li>
     {% endfor %}
 </ul>
+</div>
+</div>
+
+<div class="row">
+<img src="{{ url_for('static', filename='/images/player.png') }}" class="col-xs-6 col-md-4">
+<div class="hidden-xs col-md-4">
+<!-- PC版のテキスト欄(画像の間に配置) -->
+<ul>
+    {% for item in data | reverse %}
+    <li>{{item[2]}} / {{max_count}}</li>
+    <li>{{item[0][0]}} : {{item[0][1]}}</li>
+    <li>{{item[1][0]}} : {{item[1][1]}}</li>
+    {% endfor %}
+</ul>
+</div>
+<img src="{{ url_for('static', filename='/images/chatgpt.png') }}" class="col-xs-6 col-md-4">
+</div>
+
 {% endblock %}

@@ -11,7 +11,7 @@ Login
 {% block content %}
 <p>{{ message }}</p>
 <form method="post" action="{{ url_for('login.post') }}">
-<table>
+<table class="table">
     <tr>
         <th>名前</th>
         <td>
@@ -19,15 +19,16 @@ Login
         </td>
     </tr>
     <tr>
-        <th>password</th>
+        <th>パスワード</th>
         <td>
             <input type="password" name="pass">
         </td>
     </tr>
     <th></th>
     <td>
-        <input type="submit" value="Login">
+        <input type="submit" value="ログイン" class="btn">
     </td>
 </table>
 </form>
+
 {% endblock %}

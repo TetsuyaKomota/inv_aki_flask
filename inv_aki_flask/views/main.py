@@ -33,7 +33,7 @@ def show():
     msg = f"Login ID: {session['id']}"
     return render_template(
         "main.html",
-        title="逆アキネイター(仮)",
+        title="逆アキネイター",
         message=msg,
         data=message_data,
         ans_count=len(message_data),
