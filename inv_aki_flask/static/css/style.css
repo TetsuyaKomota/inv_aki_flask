@@ -1,0 +1,71 @@
+body {
+    margin: 10px;
+    background-color: aliceblue;
+}
+h1 {
+    color: lightsteelblue;
+    font-size: 36pt; 
+    margin: 0px;
+}
+p {
+    font-size: 14pt; 
+}
+
+div.footer {
+    text-align: right;
+    border-bottom: 1px solid lightskyblue;
+    color: lightskyblue;
+    margin: 50px 0px;
+}
+
+div.logout {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    font-weight: bold;
+    font-size: 12pt; 
+}
+
+pre {
+    background-color: white;
+    font-size: 12pt;
+    padding: 10px;
+}
+
+/* 文字を中央に揃える */
+.card-img-overlay{
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  text-align: center;
+  transform: translateY(-50%);
+  font-weight: bold;
+  padding: 100px;
+}
+
+/* 文字を左右反転させる */
+.img-flip-horizontal {
+  transform: scaleX(-1);
+}
+
+/* スマートフォン向けのフォントサイズ */
+@media (max-width: 576px) {
+  .card-text {
+    font-size: 14px;
+  }
+}
+
+/* タブレット向けのフォントサイズ */
+@media (min-width: 577px) and (max-width: 992px) {
+  .card-text {
+    font-size: 16px;
+  }
+}
+
+/* デスクトップ向けのフォントサイズ */
+@media (min-width: 993px) {
+  .card-text {
+    font-size: 18px;
+  }
+}
