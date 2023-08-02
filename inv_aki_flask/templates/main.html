@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 
 {% block title %}
-Message
+メイン画面
 {% endblock %}
 
 {% block headline %}
@@ -13,32 +13,71 @@ Message
 <p>{{ message }}</p>
 
 <form method="post" action="{{ url_for('main.post') }}">
-<table>
-    <tr>
-        <th>Message</th>
-        <td>
-            <input type="text" name="comment" width="80">
-        </td>
-    </tr>
-    <td>
-        {% if not judged and ans_count < max_count %}
-        <input type="submit" name="action" value="質問する">
-        {% endif %}
+<div class="col-xs-12">
+ <input type="text" name="comment" value="{{ input_text }}" width="80">
+</div>
 
-        {% if not judged %}
-        <input type="submit" name="action" value="回答する">
-        {% endif %}
+<div class="col-xs-12">
+ {% if not judged and ans_count < max_count %}
+ <input type="submit" name="action" value="質問する" class="btn">
+ {% endif %}
 
-        <input type="submit" name="action" value="リセット">
-    </td>
-</table>
+ {% if not judged %}
+ <input type="submit" name="action" value="回答する" class="btn">
+ {% endif %}
+
+ <input type="submit" name="action" value="リセット" class="btn">
+</div>
+
 </form>
 
-<ul>
-    {% for item in data | reverse %}
-    <li>{{item[2]}} / {{max_count}}</li>
-    <li>{{item[0][0]}} : {{item[0][1]}}</li>
-    <li>{{item[1][0]}} : {{item[1][1]}}</li>
-    {% endfor %}
-</ul>
+
+<!-- スマホ版のテキスト欄(画像の上に配置) -->
+<div class="hidden-md hidden-lg">
+ <div class="text-center">
+  {% for item in data | reverse %}
+   <p class="col-xs-12">{{item[2]}} / {{max_count}}</p>
+   <div class="card col-xs-10">
+    <img class="card-img img-responsive img-flip-horizontal" src="{{ url_for('static', filename='/images/bubble.png') }}">
+    <div class="card-img-overlay">
+     <p class="card-text">{{item[0][0]}} : {{item[0][1]}}</p>
+    </div>
+   </div>
+
+   <div class="card col-xs-10 col-xs-offset-2">
+    <img class="card-img img-responsive" src="{{ url_for('static', filename='/images/bubble.png') }}">
+    <div class="card-img-overlay">
+     <p class="card-text">{{item[1][0]}} : {{item[1][1]}}</p>
+    </div>
+   </div>
+  {% endfor %}
+ </div>
+</div>
+
+<div class="row">
+<img src="{{ url_for('static', filename='/images/player.png') }}" class="col-xs-6 col-md-4">
+<div class="hidden-xs hidden-sm col-md-4">
+ <!-- PC版のテキスト欄(画像の間に配置) -->
+ <div class="text-center">
+  {% for item in data | reverse %}
+   <p class="col-xs-12">{{item[2]}} / {{max_count}}</p>
+   <div class="card col-xs-10">
+    <img class="card-img img-responsive img-flip-horizontal" src="{{ url_for('static', filename='/images/bubble.png') }}">
+    <div class="card-img-overlay">
+     <p class="card-text">{{item[0][0]}} : {{item[0][1]}}</p>
+    </div>
+   </div>
+
+   <div class="card col-xs-10 col-xs-offset-2">
+    <img class="card-img img-responsive" src="{{ url_for('static', filename='/images/bubble.png') }}">
+    <div class="card-img-overlay">
+     <p class="card-text">{{item[1][0]}} : {{item[1][1]}}</p>
+    </div>
+   </div>
+  {% endfor %}
+ </div>
+</div>
+<img src="{{ url_for('static', filename='/images/chatgpt.png') }}" class="col-xs-6 col-md-4">
+</div>
+
 {% endblock %}

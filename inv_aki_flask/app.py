@@ -5,7 +5,7 @@ from flask import Flask
 
 from inv_aki_flask.views import index, login, main
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder="./static/")
 app.register_blueprint(index.view)
 app.register_blueprint(main.view)
 app.register_blueprint(login.view)

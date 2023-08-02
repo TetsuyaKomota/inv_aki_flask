@@ -11,9 +11,9 @@ secret_client = SecretClient(project_id="inv-aki")
 def show():
     return render_template(
         "login.html",
-        title="Login",
+        title="ログイン画面",
         err=False,
-        message="IDとパスワードを入力: ",
+        message="名前とパスワードを入力してください",
         id="",
     )
 
@@ -32,7 +32,7 @@ def post():
     else:
         return render_template(
             "login.html",
-            title="Login",
+            title="ログイン画面",
             err=False,
             message="パスワードが違います",
             id=id,
