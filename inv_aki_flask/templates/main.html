@@ -13,15 +13,11 @@
 <p>{{ message }}</p>
 
 <form method="post" action="{{ url_for('main.post') }}">
-<table class="table">
-    <tr>
-        <th>Message</th>
-        <td>
-            <input type="text" name="comment" width="80">
-        </td>
-    </tr>
-</table>
+<div class="col-xs-12">
+<input type="text" name="comment" value="男性キャラクター？" width="80">
+</div>
 
+<div class="col-xs-12">
 {% if not judged and ans_count < max_count %}
 <input type="submit" name="action" value="質問する" class="btn">
 {% endif %}
@@ -31,7 +27,7 @@
 {% endif %}
 
 <input type="submit" name="action" value="リセット" class="btn">
-
+</div>
 
 </form>
 
