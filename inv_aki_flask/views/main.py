@@ -14,13 +14,34 @@ else:
     model = ChatGPT()
 
 
+def init_message(id):
+    msg = "\n".join(
+        [
+            "有名な人物やキャラクターを思い浮かべて．",
+            "魔人が誰でも当てて見せよう．",
+        ]
+    )
+
+    ans = "よーし，やってみるぞー"
+
+    message_data = [
+        (
+            (f"アキ{id}", msg),
+            ("ChatGPT", ans),
+            0,
+        )
+    ]
+
+    return message_data
+
+
 @view.route("/", methods=["GET"])
 def show():
     if not session.get("login", False):
         return redirect(url_for("login.show"))
 
     if "messages" not in session:
-        session["messages"] = []
+        session["messages"] = init_message(session["id"])
 
     if "keyword" not in session:
         work, keyword = model.select_keyword()
@@ -63,7 +84,7 @@ def post():
         ans = model.judge(msg, work, keyword)
 
     if "messages" not in session:
-        session["messages"] = []
+        session["messages"] = init_message(session["id"])
 
     message_data = session["messages"]
 
@@ -71,7 +92,7 @@ def post():
         (
             (f"アキ{session['id']}", msg),
             ("ChatGPT", ans),
-            len(message_data) + 1,
+            len(message_data),
         )
     )
 

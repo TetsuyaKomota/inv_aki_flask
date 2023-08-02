@@ -99,6 +99,7 @@ class ChatGPT:
                 judge,
                 "私が考えていたのは",
                 keyword,
+                f"({work})",
                 "でした！",
             ]
         )
