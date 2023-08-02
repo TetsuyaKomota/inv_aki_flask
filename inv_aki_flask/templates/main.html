@@ -14,19 +14,19 @@
 
 <form method="post" action="{{ url_for('main.post') }}">
 <div class="col-xs-12">
-<input type="text" name="comment" value="男性キャラクター？" width="80">
+ <input type="text" name="comment" value="{{ input_text }}" width="80">
 </div>
 
 <div class="col-xs-12">
-{% if not judged and ans_count < max_count %}
-<input type="submit" name="action" value="質問する" class="btn">
-{% endif %}
+ {% if not judged and ans_count < max_count %}
+ <input type="submit" name="action" value="質問する" class="btn">
+ {% endif %}
 
-{% if not judged %}
-<input type="submit" name="action" value="回答する" class="btn">
-{% endif %}
+ {% if not judged %}
+ <input type="submit" name="action" value="回答する" class="btn">
+ {% endif %}
 
-<input type="submit" name="action" value="リセット" class="btn">
+ <input type="submit" name="action" value="リセット" class="btn">
 </div>
 
 </form>

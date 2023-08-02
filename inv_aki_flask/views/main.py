@@ -42,6 +42,9 @@ def show():
 
     if "messages" not in session:
         session["messages"] = init_message(session["id"])
+        input_text = "男性キャラクター？"
+    else:
+        input_text = ""
 
     if "keyword" not in session:
         work, keyword = model.select_keyword()
@@ -60,6 +63,7 @@ def show():
         ans_count=len(message_data),
         max_count=MAX_QUESTIONS,
         judged=judged,
+        input_text=input_text,
     )
 
 
