@@ -1,0 +1,37 @@
+<div class="dialog text-center">
+  {% for item in data %}
+   <div class="card col-xs-10 col-xs-offset-2 col-md-offset-0">
+    <img class="card-img img-responsive bubble-left" src="{{ url_for('static', filename='/images/bubble.png') }}">
+    <div class="card-img-overlay">
+     <p class="card-text">{{item[0][0]}} : {{item[0][1]}}</p>
+    </div>
+   </div>
+
+   <div class="card col-xs-10 col-md-offset-2">
+    <img class="card-img img-responsive bubble-right" src="{{ url_for('static', filename='/images/bubble.png') }}">
+    <div class="card-img-overlay">
+     <p class="card-text">{{item[1][0]}} : {{item[1][1]}}</p>
+    </div>
+   </div>
+  {% endfor %}
+ </div>
+ {% if not judged %}
+  <p class="col-xs-12">質問回数残り: {{max_count - ans_count}}</p>
+ {% endif %}
+ <form method="post" action="{{ url_for('main.post') }}">
+ <div class="col-xs-12">
+  <input type="text" name="comment" value="{{ input_text }}" width="80">
+ </div>
+ 
+ <div class="col-xs-12">
+  {% if not judged and ans_count < max_count %}
+  <input type="submit" name="action" value="質問する" class="btn">
+  {% endif %}
+ 
+  {% if not judged %}
+  <input type="submit" name="action" value="回答する" class="btn">
+  {% endif %}
+ 
+  <input type="submit" name="action" value="リセット" class="btn">
+ </div>
+</form>
