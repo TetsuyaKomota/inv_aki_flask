@@ -4,6 +4,16 @@
 メイン画面
 {% endblock %}
 
+{% block header %}
+<script>
+window.onpageshow = function(event) {
+  var element = document.documentElement;
+  var bottom = element.clientHeight;
+  window.scroll(0, bottom);
+};
+</script>
+{% endblock %}
+
 {% block headline %}
 {{ title }}
 {% endblock %}
@@ -12,31 +22,11 @@
 <div class="logout"><a href="{{ url_for('login.logout') }}">Logout</a></div>
 <p>{{ message }}</p>
 
-<form method="post" action="{{ url_for('main.post') }}">
-<div class="col-xs-12">
- <input type="text" name="comment" value="{{ input_text }}" width="80">
-</div>
-
-<div class="col-xs-12">
- {% if not judged and ans_count < max_count %}
- <input type="submit" name="action" value="質問する" class="btn">
- {% endif %}
-
- {% if not judged %}
- <input type="submit" name="action" value="回答する" class="btn">
- {% endif %}
-
- <input type="submit" name="action" value="リセット" class="btn">
-</div>
-
-</form>
-
 
 <!-- スマホ版のテキスト欄(画像の上に配置) -->
 <div class="hidden-md hidden-lg">
  <div class="text-center">
-  {% for item in data | reverse %}
-   <p class="col-xs-12">{{item[2]}} / {{max_count}}</p>
+  {% for item in data %}
    <div class="card col-xs-10">
     <img class="card-img img-responsive img-flip-horizontal" src="{{ url_for('static', filename='/images/bubble.png') }}">
     <div class="card-img-overlay">
@@ -52,6 +42,27 @@
    </div>
   {% endfor %}
  </div>
+ {% if not judged %}
+  <p class="col-xs-12">質問回数残り: {{max_count - ans_count}}</p>
+ {% endif %}
+ <form method="post" action="{{ url_for('main.post') }}">
+ <div class="col-xs-12">
+  <input type="text" name="comment" value="{{ input_text }}" width="80">
+ </div>
+ 
+ <div class="col-xs-12">
+  {% if not judged and ans_count < max_count %}
+  <input type="submit" name="action" value="質問する" class="btn">
+  {% endif %}
+ 
+  {% if not judged %}
+  <input type="submit" name="action" value="回答する" class="btn">
+  {% endif %}
+ 
+  <input type="submit" name="action" value="リセット" class="btn">
+ </div>
+</form>
+
 </div>
 
 <div class="row">
@@ -59,8 +70,7 @@
 <div class="hidden-xs hidden-sm col-md-4">
  <!-- PC版のテキスト欄(画像の間に配置) -->
  <div class="text-center">
-  {% for item in data | reverse %}
-   <p class="col-xs-12">{{item[2]}} / {{max_count}}</p>
+  {% for item in data %}
    <div class="card col-xs-10">
     <img class="card-img img-responsive img-flip-horizontal" src="{{ url_for('static', filename='/images/bubble.png') }}">
     <div class="card-img-overlay">
@@ -76,6 +86,27 @@
    </div>
   {% endfor %}
  </div>
+ {% if not judged %}
+  <p class="col-xs-12">質問回数残り: {{max_count - ans_count}}</p>
+ {% endif %}
+ <form method="post" action="{{ url_for('main.post') }}">
+ <div class="col-xs-12">
+  <input type="text" name="comment" value="{{ input_text }}" width="80">
+ </div>
+ 
+ <div class="col-xs-12">
+  {% if not judged and ans_count < max_count %}
+  <input type="submit" name="action" value="質問する" class="btn">
+  {% endif %}
+ 
+  {% if not judged %}
+  <input type="submit" name="action" value="回答する" class="btn">
+  {% endif %}
+ 
+  <input type="submit" name="action" value="リセット" class="btn">
+ </div>
+</form>
+
 </div>
 <img src="{{ url_for('static', filename='/images/chatgpt.png') }}" class="col-xs-6 col-md-4">
 </div>
