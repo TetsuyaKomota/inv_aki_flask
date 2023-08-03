@@ -54,7 +54,7 @@ pre {
     font-size: 14px;
   }
   .card-img-overlay {
-    padding: 30px;
+    padding: 40px;
   }
 }
 
@@ -64,7 +64,7 @@ pre {
     font-size: 16px;
   }
   .card-img-overlay {
-    padding: 50px;
+    padding: 60px;
   }
 }
 
@@ -75,5 +75,17 @@ pre {
   }
   .card-img-overlay {
     padding: 100px;
+  }
+  #img-player {
+    position: fixed;
+    top: 50%; /* 画面の中央に配置 */
+    transform: translateY(-50%); /* 上下中央揃え */
+    left: 0; /* 左寄せ */
+  }
+  #img-chatgpt {
+    position: fixed;
+    top: 50%; /* 画面の中央に配置 */
+    transform: translateY(-50%); /* 上下中央揃え */
+    right: 0; /* 右寄せ */
   }
 }
