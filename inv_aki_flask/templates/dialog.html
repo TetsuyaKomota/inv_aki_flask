@@ -1,14 +1,14 @@
-<div class="text-center">
+<div class="dialog text-center">
   {% for item in data %}
-   <div class="card col-xs-10">
-    <img class="card-img img-responsive img-flip-horizontal" src="{{ url_for('static', filename='/images/bubble.png') }}">
+   <div class="card col-xs-10 col-xs-offset-2 col-md-offset-0">
+    <img class="card-img img-responsive bubble-left" src="{{ url_for('static', filename='/images/bubble.png') }}">
     <div class="card-img-overlay">
      <p class="card-text">{{item[0][0]}} : {{item[0][1]}}</p>
     </div>
    </div>
 
-   <div class="card col-xs-10 col-xs-offset-2">
-    <img class="card-img img-responsive" src="{{ url_for('static', filename='/images/bubble.png') }}">
+   <div class="card col-xs-10 col-md-offset-2">
+    <img class="card-img img-responsive bubble-right" src="{{ url_for('static', filename='/images/bubble.png') }}">
     <div class="card-img-overlay">
      <p class="card-text">{{item[1][0]}} : {{item[1][1]}}</p>
     </div>

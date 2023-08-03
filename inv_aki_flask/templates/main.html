@@ -19,9 +19,7 @@ window.onpageshow = function(event) {
 {% endblock %}
 
 {% block content %}
-<div class="logout"><a href="{{ url_for('login.logout') }}">Logout</a></div>
 <p>{{ message }}</p>
-
 
 <!-- スマホ版のテキスト欄(画像の上に配置) -->
 <div class="hidden-md hidden-lg">
@@ -29,12 +27,21 @@ window.onpageshow = function(event) {
 </div>
 
 <div class="row">
-  <img src="{{ url_for('static', filename='/images/player.png') }}" id="img-player" class="col-xs-6 col-md-4">
+  <img src="{{ url_for('static', filename='/images/player.png') }}" id="img-player" class="col-xs-4 col-md-4">
   <!-- PC版のテキスト欄(画像の間に配置) -->
   <div class="hidden-xs hidden-sm col-md-4 col-md-offset-4">
     {% include "dialog.html" %}
   </div>
-  <img src="{{ url_for('static', filename='/images/chatgpt.png') }}" id="img-chatgpt" class="col-xs-6 col-md-4">
+  <img src="{{ url_for('static', filename='/images/chatgpt.png') }}" id="img-chatgpt" class="col-xs-4 col-xs-offset-4 col-md-4">
 </div>
 
 {% endblock %}
+
+{% block footer %}
+<div class="logout">
+  <a href="{{ url_for('login.logout') }}">Logout</a>
+</div>
+{% endblock %}
+
+
+

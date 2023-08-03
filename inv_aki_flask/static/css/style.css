@@ -19,9 +19,6 @@ div.footer {
 }
 
 div.logout {
-    position: absolute;
-    right: 10px;
-    top: 10px;
     font-weight: bold;
     font-size: 12pt; 
 }
@@ -30,6 +27,18 @@ pre {
     background-color: white;
     font-size: 12pt;
     padding: 10px;
+}
+
+.dialog {
+    margin-top: 300px;
+}
+
+.bubble-left {
+transform: scaleX(-1);
+}
+
+.bubble-right {
+transform: scaleX(1);
 }
 
 /* 文字を中央に揃える */
@@ -43,10 +52,7 @@ pre {
   font-weight: bold;
 }
 
-/* 文字を左右反転させる */
-.img-flip-horizontal {
-  transform: scaleX(-1);
-}
+
 
 /* スマートフォン向けのフォントサイズ */
 @media (max-width: 576px) {
@@ -55,6 +61,20 @@ pre {
   }
   .card-img-overlay {
     padding: 40px;
+  }
+  #img-player {
+    position: fixed;
+    top: 45%; /* 画面の中央に配置 */
+    transform: translateY(-50%); /* 上下中央揃え */
+    left: 0; /* 左寄せ */
+    z-index: -1; /* 背面に移動 */
+  }
+  #img-chatgpt {
+    position: fixed;
+    top: 65%; /* 画面の中央に配置 */
+    transform: translateY(-50%); /* 上下中央揃え */
+    right: 0; /* 右寄せ */
+    z-index: -1; /* 背面に移動 */
   }
 }
 
@@ -65,6 +85,20 @@ pre {
   }
   .card-img-overlay {
     padding: 60px;
+  }
+  #img-player {
+    position: fixed;
+    top: 50%; /* 画面の中央に配置 */
+    transform: translateY(-50%); /* 上下中央揃え */
+    left: 0; /* 左寄せ */
+    z-index: -1; /* 背面に移動 */
+  }
+  #img-chatgpt {
+    position: fixed;
+    top: 50%; /* 画面の中央に配置 */
+    transform: translateY(-50%); /* 上下中央揃え */
+    right: 0; /* 右寄せ */
+    z-index: -1; /* 背面に移動 */
   }
 }
 
@@ -81,11 +115,13 @@ pre {
     top: 50%; /* 画面の中央に配置 */
     transform: translateY(-50%); /* 上下中央揃え */
     left: 0; /* 左寄せ */
+    z-index: -1; /* 背面に移動 */
   }
   #img-chatgpt {
     position: fixed;
     top: 50%; /* 画面の中央に配置 */
     transform: translateY(-50%); /* 上下中央揃え */
     right: 0; /* 右寄せ */
+    z-index: -1; /* 背面に移動 */
   }
 }
