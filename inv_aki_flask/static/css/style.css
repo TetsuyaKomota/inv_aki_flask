@@ -41,7 +41,6 @@ pre {
   text-align: center;
   transform: translateY(-50%);
   font-weight: bold;
-  padding: 100px;
 }
 
 /* 文字を左右反転させる */
@@ -54,6 +53,9 @@ pre {
   .card-text {
     font-size: 14px;
   }
+  .card-img-overlay {
+    padding: 30px;
+  }
 }
 
 /* タブレット向けのフォントサイズ */
@@ -61,11 +63,17 @@ pre {
   .card-text {
     font-size: 16px;
   }
+  .card-img-overlay {
+    padding: 50px;
+  }
 }
 
 /* デスクトップ向けのフォントサイズ */
 @media (min-width: 993px) {
   .card-text {
     font-size: 18px;
+  }
+  .card-img-overlay {
+    padding: 100px;
   }
 }
