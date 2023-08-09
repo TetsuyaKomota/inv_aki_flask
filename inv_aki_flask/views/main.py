@@ -5,6 +5,7 @@ from hashlib import md5
 from flask import Blueprint, redirect, render_template, request, session, url_for
 
 from inv_aki_flask.model.chatgpt import MAX_QUESTIONS, ChatGPT
+from inv_aki_flask.model.datastore_client import DataStoreClient
 
 view = Blueprint("main", __name__, url_prefix="/main")
 
@@ -18,7 +19,28 @@ else:
 
 def generate_sessionid(id):
     text = f"{id}_{datetime.now()}"
-    return hashlib.md5(text.encode("utf-8")).hexdigest()
+    return md5(text.encode("utf-8")).hexdigest()
+
+
+datastore_client = DataStoreClient()
+
+
+def put_session(sessionid):
+    datastore_client.create_session_entity(sessionid)
+
+
+def put_message(work, keyword, res, sessionid, messageid):
+    datastore_client.create_message_entity(
+        sessionid=sessionid,
+        messageid=messageid,
+        work=work,
+        keyword=keyword,
+        question=res.get("question", ""),
+        answer=res.get("answer", ""),
+        reason1=res.get("reason1", ""),
+        reason2=res.get("reason2", ""),
+        reason3=res.get("reason3", ""),
+    )
 
 
 def init_message(id):
@@ -55,9 +77,10 @@ def show():
 
     if "keyword" not in session:
         work, keyword = model.select_keyword()
-        session["sessionid"] = generate_sessionid(session["id"])
         session["work"] = work
         session["keyword"] = keyword
+        session["sessionid"] = generate_sessionid(session["id"])
+        put_session(session["sessionid"])
 
     message_data = session["messages"]
     judged = "judged" in session
@@ -86,19 +109,23 @@ def post():
                 del session[k]
         return redirect(url_for("main.show"))
 
-    work = session.get("work", "")
-    keyword = session.get("keyword", "")
-
-    if typ == "質問する":
-        ans = model.ask_answer(msg, work, keyword)
-    elif typ == "回答する":
-        session["judged"] = True
-        ans = model.judge(msg, work, keyword)
-
     if "messages" not in session:
         session["messages"] = init_message(session["id"])
 
     message_data = session["messages"]
+
+    work = session.get("work", "")
+    keyword = session.get("keyword", "")
+    sessionid = session.get("sessionid", "")
+    messageid = len(message_data)
+
+    if typ == "質問する":
+        ans, res = model.ask_answer(msg, work, keyword)
+        put_message(work, keyword, res, sessionid, messageid)
+
+    elif typ == "回答する":
+        session["judged"] = True
+        ans = model.judge(msg, work, keyword)
 
     message_data.append(
         (

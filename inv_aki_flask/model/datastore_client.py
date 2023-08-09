@@ -1,5 +1,6 @@
-from google.cloud import datastore
 from datetime import datetime, timedelta
+
+from google.cloud import datastore
 
 
 class InvalidKeyException(Exception):
