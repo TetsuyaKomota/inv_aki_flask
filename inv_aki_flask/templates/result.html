@@ -1,0 +1,28 @@
+{% extends "layout.html" %}
+
+{% block title %}
+リザルト
+{% endblock %}
+
+{% block content %}
+    <h2>質問回答一覧</h2>
+    <div>
+        <table class="table">
+          <tbody>
+        {% for item in messages %}
+    <tr>
+        <td>{{ item["work"] }} </td>
+        <td>{{ item["keyword"] }} </td>
+        <td>{{ item["question"] }} </td>
+        <td>{{ item["answer"] }} </td>
+        <td>{{ item["reason1"] }} </td>
+        <td>{{ item["reason2"] }} </td>
+        <td>{{ item["reason3"] }} </td>
+    </tr>
+        {% endfor %}
+        </table>
+    </div>
+
+    <p><a href="{{ url_for('main.show') }}">戻る</a></p>
+
+{% endblock %}

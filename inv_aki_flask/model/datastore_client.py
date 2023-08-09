@@ -97,8 +97,9 @@ class DataStoreClient:
         )
 
 
+client = DataStoreClient()
+
 if __name__ == "__main__":
-    client = DataStoreClient()
     client.create_session_entity("session_1")
     client.create_message_entity(
         "session_1",

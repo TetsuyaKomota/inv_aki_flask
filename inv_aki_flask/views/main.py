@@ -5,7 +5,7 @@ from hashlib import md5
 from flask import Blueprint, redirect, render_template, request, session, url_for
 
 from inv_aki_flask.model.chatgpt import MAX_QUESTIONS, ChatGPT
-from inv_aki_flask.model.datastore_client import DataStoreClient
+from inv_aki_flask.model.datastore_client import client as datastore_client
 
 view = Blueprint("main", __name__, url_prefix="/main")
 
@@ -20,9 +20,6 @@ else:
 def generate_sessionid(id):
     text = f"{id}_{datetime.now()}"
     return md5(text.encode("utf-8")).hexdigest()
-
-
-datastore_client = DataStoreClient()
 
 
 def put_session(sessionid):
@@ -102,6 +99,9 @@ def show():
 def post():
     msg = request.form.get("comment")
     typ = request.form.get("action")
+
+    if typ == "答え合わせ":
+        return redirect(url_for("result.show"))
 
     if typ == "リセット":
         for k in ["messages", "work", "keyword", "judged"]:
