@@ -60,7 +60,7 @@ def show():
         title="逆アキネイター",
         message=msg,
         data=message_data,
-        ans_count=len(message_data) - 1, # 最初のセリフ分
+        ans_count=len(message_data) - 1,  # 最初のセリフ分
         max_count=MAX_QUESTIONS,
         judged=judged,
         input_text=input_text,
