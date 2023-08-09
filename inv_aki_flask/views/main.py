@@ -1,4 +1,6 @@
 import os
+from datetime import datetime
+from hashlib import md5
 
 from flask import Blueprint, redirect, render_template, request, session, url_for
 
@@ -12,6 +14,11 @@ if os.path.exists("tmp/api_key.txt"):
     model = ChatGPT(api_key, "")
 else:
     model = ChatGPT()
+
+
+def generate_sessionid(id):
+    text = f"{id}_{datetime.now()}"
+    return hashlib.md5(text.encode("utf-8")).hexdigest()
 
 
 def init_message(id):
@@ -48,6 +55,7 @@ def show():
 
     if "keyword" not in session:
         work, keyword = model.select_keyword()
+        session["sessionid"] = generate_sessionid(session["id"])
         session["work"] = work
         session["keyword"] = keyword
 
