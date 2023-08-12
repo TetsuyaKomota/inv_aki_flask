@@ -5,24 +5,79 @@
 {% endblock %}
 
 {% block content %}
-    <h2>質問回答一覧</h2>
-    <div>
-        <table class="table">
-          <tbody>
-        {% for item in messages %}
-    <tr>
-        <td>{{ item["work"] }} </td>
-        <td>{{ item["keyword"] }} </td>
-        <td>{{ item["question"] }} </td>
-        <td>{{ item["answer"] }} </td>
-        <td>{{ item["reason1"] }} </td>
-        <td>{{ item["reason2"] }} </td>
-        <td>{{ item["reason3"] }} </td>
-    </tr>
-        {% endfor %}
-        </table>
-    </div>
+ <h2>質問回答一覧</h2>
 
-    <p><a href="{{ url_for('main.show') }}">戻る</a></p>
+ <!-- スマホ版の質問返答一覧(expand形式) -->
+ <div class="hidden-md hidden-lg">
+  {% for item in messages %}
+  <div class="panel-group">
+   <div class="panel panel-default">
+    <div class="panel-heading">
+     <h4 class="panel-title">
+      <a data-toggle="collapse" href="#collapse{{item['question']}}">
+       {{ item["question"] }}
+      </a>
+     </h4>
+    </div>
+    <div id="collapse{{item['question']}}" class="panel-collapse collapse">
+     <div class="row">
+      <div class="panel-body col-xs-2 col-xs-offset-1">返答</div>
+      <div class="panel-body col-xs-8">{{ item["answer"] }}</div>
+
+      {% if item["reason1"] != "" %}
+      <div class="panel-body col-xs-2 col-xs-offset-1">理由1</div>
+      <div class="panel-body col-xs-8">{{ item["reason1"] }}</div>
+      {% endif%}
+
+      {% if item["reason2"] != "" %}
+      <div class="panel-body col-xs-2 col-xs-offset-1">理由2</div>
+      <div class="panel-body col-xs-8">{{ item["reason2"] }}</div>
+      {% endif%}
+
+      {% if item["reason3"] != "" %}
+      <div class="panel-body col-xs-2 col-xs-offset-1">理由3</div>
+      <div class="panel-body col-xs-8">{{ item["reason3"] }}</div>
+      {% endif%}
+     </div>
+    </div>
+   </div>
+  </div>
+  {% endfor %}
+ </div>
+
+ <!-- PC版の質問返答一覧(テーブル形式) -->
+ <div class="hidden-xs hidden-sm">
+  <table class="table table-hover">
+   <thead>
+     <tr>
+      <th>質問</th>
+      <th>返答</th>
+      <th>理由</th>
+     </tr>
+   </thead>
+   <tbody>
+    {% for item in messages %}
+     <tr>
+      <td>{{ item["question"] }} </td>
+      <td>{{ item["answer"] }} </td>
+      <td>
+      <p>{{ item["reason1"] }} </p>
+      <p>{{ item["reason2"] }} </p>
+      <p>{{ item["reason3"] }} </p>
+      </td>
+     </tr>
+    {% endfor %}
+   </tbody>
+  </table>
+ </div>
+
+ <h2>答え</h2>
+ <table class="table">
+  <tr>
+   <td>{{ messages[0]["keyword"] }} ({{messages[0]["work"]}}) </td>
+  </tr>
+ </table>
+
+ <p><a href="{{ url_for('main.show') }}">戻る</a></p>
 
 {% endblock %}
