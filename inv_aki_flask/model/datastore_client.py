@@ -8,8 +8,11 @@ class InvalidKeyException(Exception):
 
 
 class DataStoreClient:
+    KIND_SESSION_LIST = "SessionList"
     KIND_SESSION = "Session"
     KIND_MESSAGE = "Message"
+
+    KEYID_SESSION_LIST = "v0.0.1"  # 全件検索用
 
     def __init__(self):
         self.client = datastore.Client()
@@ -57,7 +60,12 @@ class DataStoreClient:
     def create_session_entity(self, sessionid):
         expiration = datetime.now() + timedelta(days=1)
         self._upsert(
-            kind=DataStoreClient.KIND_SESSION, keyid=sessionid, expiration=expiration
+            kind=DataStoreClient.KIND_SESSION,
+            keyid=sessionid,
+            parent_kind=DataStoreClient.KIND_SESSION_LIST,
+            parent_keyid=DataStoreClient.KEYID_SESSION_LIST,
+            public=True,  # FIXME 公開設定実装したらFalseに変更
+            expiration=expiration,
         )
 
     def create_message_entity(
