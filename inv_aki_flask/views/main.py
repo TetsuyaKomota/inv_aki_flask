@@ -97,6 +97,9 @@ def show():
 
 @view.route("/", methods=["POST"])
 def post():
+    if not session.get("login", False):
+        return redirect(url_for("login.show"))
+
     msg = request.form.get("comment")
     typ = request.form.get("action")
 

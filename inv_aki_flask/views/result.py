@@ -7,6 +7,9 @@ view = Blueprint("result", __name__, url_prefix="/result")
 
 @view.route("/", methods=["GET"])
 def show():
+    if not session.get("login", False):
+        return redirect(url_for("login.show"))
+
     sessionid = session.get("sessionid", "")
     messages = datastore_client.get_messages(sessionid=sessionid)
     return render_template("result.html", messages=messages)
