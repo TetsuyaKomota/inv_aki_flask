@@ -149,6 +149,14 @@ class DataStoreClient:
         # TODO たぶんここ query を使ったほうがリソースが節約できる
         entities = [e for e in entities if e.get("public", False)]
 
+        # TODO update 側修正してたぶんこれいらなくなる
+        entities = [e for e in entities if e.get("keyword", "") != ""]
+
+        # ランク順かつ，同ランクなら新しい順にソート
+        entities = sorted(
+            entities, key=lambda x: (-x["rank"], x["expiration"]), reverse=True
+        )
+
         return entities
 
 

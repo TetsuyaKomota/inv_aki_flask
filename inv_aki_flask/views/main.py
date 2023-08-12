@@ -101,8 +101,10 @@ def post():
     msg = request.form.get("comment")
     typ = request.form.get("action")
 
+    sessionid = session.get("sessionid", "")
+
     if typ == "答え合わせ":
-        return redirect(url_for("result.show"))
+        return redirect(url_for("result.show", sessionid=sessionid))
 
     if typ == "リセット":
         for k in ["messages", "work", "keyword", "judged"]:
@@ -117,7 +119,6 @@ def post():
 
     work = session.get("work", "")
     keyword = session.get("keyword", "")
-    sessionid = session.get("sessionid", "")
     messageid = len(message_data)
 
     if typ == "質問する":
@@ -128,7 +129,7 @@ def post():
         ans, judge = model.judge(msg, work, keyword)
         session["judged"] = True
         datastore_client.update_session_entity(
-            sessionid=sessionid, judge=judge, rank=messageid
+            sessionid=sessionid, judge=judge, rank=messageid - 1  # 最初のセリフ分
         )
 
     message_data.append(

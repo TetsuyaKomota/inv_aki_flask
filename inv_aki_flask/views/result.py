@@ -5,12 +5,8 @@ from inv_aki_flask.model.datastore_client import client as datastore_client
 view = Blueprint("result", __name__, url_prefix="/result")
 
 
-@view.route("/", methods=["GET"])
-def show():
-    if not session.get("login", False):
-        return redirect(url_for("login.show"))
-
-    sessionid = session.get("sessionid", "")
+@view.route("/<string:sessionid>", methods=["GET"])
+def show(sessionid):
     session_info = datastore_client.get_session(sessionid=sessionid)
     messages = datastore_client.get_messages(sessionid=sessionid)
     return render_template("result.html", session_info=session_info, messages=messages)
@@ -24,7 +20,8 @@ def post():
         datastore_client.update_session_entity(
             sessionid=sessionid,
             public=True,
+            judge=False,  # 閲覧ページから再登録できないように
             expire_at=7,  # 記録したデータは7日間有効(FIXME 要調整)
         )
 
-    return redirect(url_for("main.show"))
+    return redirect(url_for("ranking.show"))
