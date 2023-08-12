@@ -78,6 +78,12 @@
   </tr>
  </table>
 
+  {% if session_info.get("judge", False) %}
+  <form method="post" action="{{ url_for('result.post') }}">
+   <input type="submit" name="action" value="結果を記録する" class="btn">
+  </form>
+  {% endif %}
+
  <p><a href="{{ url_for('main.show') }}">戻る</a></p>
 
 {% endblock %}

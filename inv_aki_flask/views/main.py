@@ -127,8 +127,11 @@ def post():
         put_message(work, keyword, res, sessionid, messageid)
 
     elif typ == "回答する":
+        ans, judge = model.judge(msg, work, keyword)
         session["judged"] = True
-        ans = model.judge(msg, work, keyword)
+        datastore_client.update_session_entity(
+            sessionid=sessionid, judge=judge, rank=messageid
+        )
 
     message_data.append(
         (

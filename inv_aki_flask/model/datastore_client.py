@@ -7,6 +7,10 @@ class InvalidKeyException(Exception):
     pass
 
 
+class SessionNotExistsException(Exception):
+    pass
+
+
 class DataStoreClient:
     KIND_SESSION_LIST = "SessionList"
     KIND_SESSION = "Session"
@@ -40,9 +44,9 @@ class DataStoreClient:
 
     @validate_key
     def _upsert(self, key, **properties):
-        task = datastore.Entity(key)
-        task.update(properties)
-        self.client.put(task)
+        entity = datastore.Entity(key)
+        entity.update(properties)
+        self.client.put(entity)
 
     @validate_key
     def _select(self, key):
@@ -51,6 +55,12 @@ class DataStoreClient:
     @validate_key
     def _delete(self, key):
         return self.client.delete(key)
+
+    def _update(self, entity, **properties):
+        for k, v in properties.items():
+            if v is not None:
+                entity[k] = v
+        self.client.put(entity)
 
     def _get_from_parent(self, kind, parent_kind, parent_keyid):
         ancestor_key = self.client.key(parent_kind, parent_keyid)
@@ -64,8 +74,27 @@ class DataStoreClient:
             keyid=sessionid,
             parent_kind=DataStoreClient.KIND_SESSION_LIST,
             parent_keyid=DataStoreClient.KEYID_SESSION_LIST,
-            public=True,  # FIXME 公開設定実装したらFalseに変更
+            public=False,
             expiration=expiration,
+        )
+
+    def update_session_entity(
+        self, sessionid, *, expire_at=None, public=None, rank=None, judge=None
+    ):
+        session = self._select(
+            kind=DataStoreClient.KIND_SESSION,
+            keyid=sessionid,
+            parent_kind=DataStoreClient.KIND_SESSION_LIST,
+            parent_keyid=DataStoreClient.KEYID_SESSION_LIST,
+        )
+        if session is None:
+            raise SessionNotExistsException("session が存在しません")
+        if expire_at is not None:
+            expiration = datetime.now() + timedelta(days=expire_at)
+        else:
+            expiration = None
+        self._update(
+            session, expiration=expiration, public=public, rank=rank, judge=judge
         )
 
     def create_message_entity(
@@ -95,6 +124,14 @@ class DataStoreClient:
             reason2=reason2,
             reason3=reason3,
             expiration=expiration,
+        )
+
+    def get_session(self, sessionid):
+        return self._select(
+            kind=DataStoreClient.KIND_SESSION,
+            keyid=sessionid,
+            parent_kind=DataStoreClient.KIND_SESSION_LIST,
+            parent_keyid=DataStoreClient.KEYID_SESSION_LIST,
         )
 
     def get_messages(self, sessionid):

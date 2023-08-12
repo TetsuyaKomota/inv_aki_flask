@@ -126,7 +126,7 @@ class ChatGPT:
 
         self.logging(answer)
 
-        return answer
+        return answer, (judge == "正解！")
 
     def request_to_chatgpt_mock(self, content):
         if content.startswith("アニメのキャラクターの名前を"):
