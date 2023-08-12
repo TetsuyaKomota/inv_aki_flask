@@ -1,6 +1,7 @@
 import os
 import re
 from datetime import datetime
+from random import choice
 
 import openai
 
@@ -13,7 +14,7 @@ class ChatGPT:
     SELECT_MAX_RETRY = 5
     ANSWER_MAX_RETRY = 3
 
-    def __init__(self, api_key=None, work_preserve=""):
+    def __init__(self, api_key=None):
         self.secret_client = SecretClient(project_id="inv-aki")
         self.set_api_key(api_key)
 
@@ -26,7 +27,6 @@ class ChatGPT:
         self.log_path = os.path.join(
             log_dir_path, f"{datetime.now().strftime('%Y%m%d%H%M%S')}.txt"
         )
-        self.work_preserve = work_preserve
         self.prompt_select = self.load_prompt("template_select.txt")
         self.prompt_answer = self.load_prompt("template_answer.txt")
         self.prompt_judge = self.load_prompt("template_judge.txt")
@@ -53,10 +53,8 @@ class ChatGPT:
     def parse_select(self, res):
         output = {}
         for line in res.split("\n"):
-            if line.startswith("代表作: "):
-                output["work"] = line.strip()[len("代表作: ") :]
-            if line.startswith("キャラクター名: "):
-                output["keyword"] = line.strip()[len("キャラクター名: ") :]
+            if line.startswith("対象の名称: "):
+                output["keyword"] = line.strip()[len("対象の名称: ") :]
         return output
 
     def parse_answer(self, res):
@@ -72,22 +70,43 @@ class ChatGPT:
                 output["answer"] = line.strip()[len("返答: ") :]
         return output
 
+    def parse_judge(self, res):
+        output = {}
+        for line in res.split("\n"):
+            if line.startswith("返答: "):
+                output["judge"] = line.strip()[len("返答: ") :]
+        return output
+
+    def select_category(self):
+        category_list = [
+            "実在する動物",
+            "実在する日本人",
+            "実在する食べ物や料理",
+            "実在する文房具",
+            "実在する漫画やアニメのキャラクター",
+            "実在するディズニーキャラクター",
+        ]
+
+        return choice(category_list)
+
     def select_keyword(self):
-        text = self.prompt_select.format(work_preserve=self.work_preserve)
+        category = self.select_category()
+        text = self.prompt_select.format(category=category)
         for _ in range(ChatGPT.SELECT_MAX_RETRY):
             res = self.request_to_chatgpt(text)
             res = self.parse_select(res)
-            work = res.get("work", "")
             keyword = res.get("keyword", "")
-            if work != "" and keyword != "":
-                return work, keyword
+            if keyword != "":
+                return category, keyword
         raise Exception("キーワードの選択に失敗しました")
 
-    def ask_answer(self, question, work, keyword):
+    def ask_answer(self, question, category, keyword):
         self.logging("----------")
         self.logging("question: " + question)
 
-        text = self.prompt_answer.format(work=work, keyword=keyword, question=question)
+        text = self.prompt_answer.format(
+            category=category, keyword=keyword, question=question
+        )
 
         for _ in range(ChatGPT.ANSWER_MAX_RETRY):
             res = self.request_to_chatgpt(text)
@@ -103,13 +122,16 @@ class ChatGPT:
 
         return answer, res
 
-    def judge(self, question, work, keyword):
+    def judge(self, question, category, keyword):
         self.logging("----------")
         self.logging("question: " + question)
-        text = self.prompt_judge.format(work=work, keyword1=keyword, keyword2=question)
+        text = self.prompt_judge.format(
+            category=category, keyword1=keyword, keyword2=question
+        )
 
         res = self.request_to_chatgpt(text)
-        answer = res.strip().split("\n")[-1]
+        res = self.parse_judge(res)
+        answer = res["judge"]
         if "同じものである" in answer:
             judge = "正解！"
         else:
@@ -119,7 +141,7 @@ class ChatGPT:
                 judge,
                 "私が考えていたのは",
                 keyword,
-                f"({work})",
+                f"({category})",
                 "でした！",
             ]
         )
@@ -161,13 +183,19 @@ class ChatGPT:
         if not self.is_active:
             return self.request_to_chatgpt_mock(content)
 
+        system_content, user_content = content.split("------")
+
         completion = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
             messages=[
                 {
+                    "role": "system",
+                    "content": system_content.strip(),
+                },
+                {
                     "role": "user",
-                    "content": content,
-                }
+                    "content": user_content.strip(),
+                },
             ],
         )
         res = completion.choices[0].message.content

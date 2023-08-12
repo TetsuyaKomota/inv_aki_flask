@@ -67,14 +67,14 @@ class DataStoreClient:
         query = self.client.query(kind=kind, ancestor=ancestor_key)
         return list(query.fetch())
 
-    def create_session_entity(self, sessionid, work, keyword):
+    def create_session_entity(self, sessionid, category, keyword):
         expiration = datetime.now() + timedelta(days=1)
         self._upsert(
             kind=DataStoreClient.KIND_SESSION,
             keyid=sessionid,
             parent_kind=DataStoreClient.KIND_SESSION_LIST,
             parent_keyid=DataStoreClient.KEYID_SESSION_LIST,
-            work=work,
+            category=category,
             keyword=keyword,
             public=False,
             expiration=expiration,
