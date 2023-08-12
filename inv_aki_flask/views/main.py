@@ -1,8 +1,11 @@
 import os
+from datetime import datetime
+from hashlib import md5
 
 from flask import Blueprint, redirect, render_template, request, session, url_for
 
 from inv_aki_flask.model.chatgpt import MAX_QUESTIONS, ChatGPT
+from inv_aki_flask.model.datastore_client import client as datastore_client
 
 view = Blueprint("main", __name__, url_prefix="/main")
 
@@ -12,6 +15,27 @@ if os.path.exists("tmp/api_key.txt"):
     model = ChatGPT(api_key, "")
 else:
     model = ChatGPT()
+
+
+def generate_sessionid(id):
+    text = f"{id}_{datetime.now()}"
+    return md5(text.encode("utf-8")).hexdigest()
+
+
+def put_session(sessionid, work, keyword):
+    datastore_client.create_session_entity(sessionid, work=work, keyword=keyword)
+
+
+def put_message(res, sessionid, messageid):
+    datastore_client.create_message_entity(
+        sessionid=sessionid,
+        messageid=messageid,
+        question=res.get("question", ""),
+        answer=res.get("answer", ""),
+        reason1=res.get("reason1", ""),
+        reason2=res.get("reason2", ""),
+        reason3=res.get("reason3", ""),
+    )
 
 
 def init_message(id):
@@ -50,6 +74,8 @@ def show():
         work, keyword = model.select_keyword()
         session["work"] = work
         session["keyword"] = keyword
+        session["sessionid"] = generate_sessionid(session["id"])
+        put_session(session["sessionid"], work=work, keyword=keyword)
 
     message_data = session["messages"]
     judged = "judged" in session
@@ -60,7 +86,7 @@ def show():
         title="逆アキネイター",
         message=msg,
         data=message_data,
-        ans_count=len(message_data) - 1, # 最初のセリフ分
+        ans_count=len(message_data) - 1,  # 最初のセリフ分
         max_count=MAX_QUESTIONS,
         judged=judged,
         input_text=input_text,
@@ -69,8 +95,16 @@ def show():
 
 @view.route("/", methods=["POST"])
 def post():
+    if not session.get("login", False):
+        return redirect(url_for("login.show"))
+
     msg = request.form.get("comment")
     typ = request.form.get("action")
+
+    sessionid = session.get("sessionid", "")
+
+    if typ == "答え合わせ":
+        return redirect(url_for("result.show", sessionid=sessionid))
 
     if typ == "リセット":
         for k in ["messages", "work", "keyword", "judged"]:
@@ -78,19 +112,25 @@ def post():
                 del session[k]
         return redirect(url_for("main.show"))
 
-    work = session.get("work", "")
-    keyword = session.get("keyword", "")
-
-    if typ == "質問する":
-        ans = model.ask_answer(msg, work, keyword)
-    elif typ == "回答する":
-        session["judged"] = True
-        ans = model.judge(msg, work, keyword)
-
     if "messages" not in session:
         session["messages"] = init_message(session["id"])
 
     message_data = session["messages"]
+
+    work = session.get("work", "")
+    keyword = session.get("keyword", "")
+    messageid = len(message_data)
+
+    if typ == "質問する":
+        ans, res = model.ask_answer(msg, work, keyword)
+        put_message(res, sessionid, messageid)
+
+    elif typ == "回答する":
+        ans, judge = model.judge(msg, work, keyword)
+        session["judged"] = True
+        datastore_client.update_session_entity(
+            sessionid=sessionid, judge=judge, rank=messageid - 1  # 最初のセリフ分
+        )
 
     message_data.append(
         (

@@ -1,44 +1,42 @@
 body {
-    margin: 10px;
-    background-color: aliceblue;
+  margin: 10px;
+  background-color: aliceblue;
 }
+
 h1 {
-    color: lightsteelblue;
-    font-size: 36pt; 
-    margin: 0px;
-}
-p {
-    font-size: 14pt; 
+  color: lightsteelblue;
+  font-size: 36pt; 
+  margin: 0px;
 }
 
 div.footer {
-    text-align: right;
-    border-bottom: 1px solid lightskyblue;
-    color: lightskyblue;
-    margin: 50px 0px;
+  text-align: right;
+  border-bottom: 1px solid lightskyblue;
+  color: lightskyblue;
+  margin: 50px 0px;
 }
 
 div.logout {
-    font-weight: bold;
-    font-size: 12pt; 
+  font-weight: bold;
+  font-size: 12pt; 
 }
 
 pre {
-    background-color: white;
-    font-size: 12pt;
-    padding: 10px;
+  background-color: white;
+  font-size: 12pt;
+  padding: 10px;
 }
 
 .dialog {
-    margin-top: 300px;
+  margin-top: 300px;
 }
 
 .bubble-left {
-transform: scaleX(-1);
+  transform: scaleX(-1);
 }
 
 .bubble-right {
-transform: scaleX(1);
+  transform: scaleX(1);
 }
 
 /* 文字を中央に揃える */
@@ -52,16 +50,16 @@ transform: scaleX(1);
   font-weight: bold;
 }
 
-
-
 /* スマートフォン向けのフォントサイズ */
 @media (max-width: 576px) {
   .card-text {
     font-size: 14px;
   }
+
   .card-img-overlay {
     padding: 40px;
   }
+  
   #img-player {
     position: fixed;
     top: 45%; /* 画面の中央に配置 */
@@ -69,6 +67,7 @@ transform: scaleX(1);
     left: 0; /* 左寄せ */
     z-index: -1; /* 背面に移動 */
   }
+
   #img-chatgpt {
     position: fixed;
     top: 65%; /* 画面の中央に配置 */
@@ -83,9 +82,11 @@ transform: scaleX(1);
   .card-text {
     font-size: 16px;
   }
+
   .card-img-overlay {
     padding: 60px;
   }
+
   #img-player {
     position: fixed;
     top: 50%; /* 画面の中央に配置 */
@@ -93,6 +94,7 @@ transform: scaleX(1);
     left: 0; /* 左寄せ */
     z-index: -1; /* 背面に移動 */
   }
+
   #img-chatgpt {
     position: fixed;
     top: 50%; /* 画面の中央に配置 */
@@ -107,9 +109,11 @@ transform: scaleX(1);
   .card-text {
     font-size: 18px;
   }
+
   .card-img-overlay {
     padding: 100px;
   }
+
   #img-player {
     position: fixed;
     top: 50%; /* 画面の中央に配置 */
@@ -117,6 +121,7 @@ transform: scaleX(1);
     left: 0; /* 左寄せ */
     z-index: -1; /* 背面に移動 */
   }
+
   #img-chatgpt {
     position: fixed;
     top: 50%; /* 画面の中央に配置 */

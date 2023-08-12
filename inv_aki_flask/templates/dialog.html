@@ -31,6 +31,10 @@
   {% if not judged %}
   <input type="submit" name="action" value="回答する" class="btn">
   {% endif %}
+
+  {% if judged %}
+  <input type="submit" name="action" value="答え合わせ" class="btn">
+  {% endif %}
  
   <input type="submit" name="action" value="リセット" class="btn">
  </div>

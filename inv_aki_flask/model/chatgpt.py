@@ -50,19 +50,38 @@ class ChatGPT:
             text = f.read()
         return text
 
+    def parse_select(self, res):
+        output = {}
+        for line in res.split("\n"):
+            if line.startswith("代表作: "):
+                output["work"] = line.strip()[len("代表作: ") :]
+            if line.startswith("キャラクター名: "):
+                output["keyword"] = line.strip()[len("キャラクター名: ") :]
+        return output
+
+    def parse_answer(self, res):
+        output = {}
+        for line in res.split("\n"):
+            if line.startswith("理由1: "):
+                output["reason1"] = line.strip()[len("理由1: ") :]
+            if line.startswith("理由2: "):
+                output["reason2"] = line.strip()[len("理由2: ") :]
+            if line.startswith("理由3: "):
+                output["reason3"] = line.strip()[len("理由3: ") :]
+            if line.startswith("返答: "):
+                output["answer"] = line.strip()[len("返答: ") :]
+        return output
+
     def select_keyword(self):
         text = self.prompt_select.format(work_preserve=self.work_preserve)
-        keywords = []
         for _ in range(ChatGPT.SELECT_MAX_RETRY):
             res = self.request_to_chatgpt(text)
-            work = res.strip().split("\n")[0]
-            keyword = res.strip().split("\n")[-1]
-            keywords.append(keyword)
-            if "代表作: " in work and "キャラクター名: " in keyword:
-                work = re.sub("代表作: ", "", work)
-                keyword = re.sub("キャラクター名: ", "", keyword)
+            res = self.parse_select(res)
+            work = res.get("work", "")
+            keyword = res.get("keyword", "")
+            if work != "" and keyword != "":
                 return work, keyword
-        raise Exception(f"キーワードの選択に失敗しました: {keywords}")
+        raise Exception("キーワードの選択に失敗しました")
 
     def ask_answer(self, question, work, keyword):
         self.logging("----------")
@@ -72,16 +91,17 @@ class ChatGPT:
 
         for _ in range(ChatGPT.ANSWER_MAX_RETRY):
             res = self.request_to_chatgpt(text)
-            answer = res.strip().split("\n")[-1]
-            if "返答: " in answer:
-                answer = re.sub("返答: ", "", answer)
+            res = self.parse_answer(res)
+            res["question"] = question
+            answer = res.get("answer", "")
+            if answer != "":
                 break
         else:
             answer = "分からない"
 
         self.logging("answer: " + answer)
 
-        return answer
+        return answer, res
 
     def judge(self, question, work, keyword):
         self.logging("----------")
@@ -106,7 +126,7 @@ class ChatGPT:
 
         self.logging(answer)
 
-        return answer
+        return answer, (judge == "正解！")
 
     def request_to_chatgpt_mock(self, content):
         if content.startswith("アニメのキャラクターの名前を"):
