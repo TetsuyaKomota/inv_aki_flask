@@ -22,16 +22,14 @@ def generate_sessionid(id):
     return md5(text.encode("utf-8")).hexdigest()
 
 
-def put_session(sessionid):
-    datastore_client.create_session_entity(sessionid)
+def put_session(sessionid, work, keyword):
+    datastore_client.create_session_entity(sessionid, work=work, keyword=keyword)
 
 
-def put_message(work, keyword, res, sessionid, messageid):
+def put_message(res, sessionid, messageid):
     datastore_client.create_message_entity(
         sessionid=sessionid,
         messageid=messageid,
-        work=work,
-        keyword=keyword,
         question=res.get("question", ""),
         answer=res.get("answer", ""),
         reason1=res.get("reason1", ""),
@@ -77,7 +75,7 @@ def show():
         session["work"] = work
         session["keyword"] = keyword
         session["sessionid"] = generate_sessionid(session["id"])
-        put_session(session["sessionid"])
+        put_session(session["sessionid"], work=work, keyword=keyword)
 
     message_data = session["messages"]
     judged = "judged" in session
@@ -124,7 +122,7 @@ def post():
 
     if typ == "質問する":
         ans, res = model.ask_answer(msg, work, keyword)
-        put_message(work, keyword, res, sessionid, messageid)
+        put_message(res, sessionid, messageid)
 
     elif typ == "回答する":
         ans, judge = model.judge(msg, work, keyword)

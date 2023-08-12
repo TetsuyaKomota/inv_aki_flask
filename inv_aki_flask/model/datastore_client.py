@@ -67,13 +67,15 @@ class DataStoreClient:
         query = self.client.query(kind=kind, ancestor=ancestor_key)
         return list(query.fetch())
 
-    def create_session_entity(self, sessionid):
+    def create_session_entity(self, sessionid, work, keyword):
         expiration = datetime.now() + timedelta(days=1)
         self._upsert(
             kind=DataStoreClient.KIND_SESSION,
             keyid=sessionid,
             parent_kind=DataStoreClient.KIND_SESSION_LIST,
             parent_keyid=DataStoreClient.KEYID_SESSION_LIST,
+            work=work,
+            keyword=keyword,
             public=False,
             expiration=expiration,
         )
@@ -101,8 +103,6 @@ class DataStoreClient:
         self,
         sessionid,
         messageid,
-        work,
-        keyword,
         question,
         answer,
         reason1,
@@ -116,8 +116,6 @@ class DataStoreClient:
             keyid=messageid,
             parent_kind=DataStoreClient.KIND_SESSION,
             parent_keyid=sessionid,
-            work=work,
-            keyword=keyword,
             question=question,
             answer=answer,
             reason1=reason1,
@@ -140,6 +138,18 @@ class DataStoreClient:
             parent_kind=DataStoreClient.KIND_SESSION,
             parent_keyid=sessionid,
         )
+
+    def get_public_sessions(self):
+        entities = self._get_from_parent(
+            kind=DataStoreClient.KIND_SESSION,
+            parent_kind=DataStoreClient.KIND_SESSION_LIST,
+            parent_keyid=DataStoreClient.KEYID_SESSION_LIST,
+        )
+
+        # TODO たぶんここ query を使ったほうがリソースが節約できる
+        entities = [e for e in entities if e.get("public", False)]
+
+        return entities
 
 
 client = DataStoreClient()
