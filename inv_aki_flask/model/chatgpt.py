@@ -13,6 +13,7 @@ MAX_QUESTIONS = 10
 class ChatGPT:
     SELECT_MAX_RETRY = 5
     ANSWER_MAX_RETRY = 3
+    JUDGE_MAX_RETRY = 3
 
     def __init__(self, api_key=None):
         self.secret_client = SecretClient(project_id="inv-aki")
@@ -129,9 +130,15 @@ class ChatGPT:
             category=category, keyword1=keyword, keyword2=question
         )
 
-        res = self.request_to_chatgpt(text)
-        res = self.parse_judge(res)
-        answer = res["judge"]
+        for _ in range(ChatGPT.JUDGE_MAX_RETRY):
+            res = self.request_to_chatgpt(text)
+            res = self.parse_judge(res)
+            answer = res.get("judge", "")
+            if answer != "":
+                break
+        else:
+            answer = "分からない"
+
         if "同じものである" in answer:
             judge = "正解！"
         else:
