@@ -23,5 +23,11 @@ def post():
             judge=False,  # 閲覧ページから再登録できないように
             expire_at=7,  # 記録したデータは7日間有効(FIXME 要調整)
         )
+        messages = datastore_client.get_messages(sessionid=sessionid)
+        for message in messages:
+            datastore_client.update_message_expiration(
+                message,
+                expire_at=7,  # 記録したデータは7日間有効(FIXME 要調整)
+            )
 
     return redirect(url_for("ranking.show"))
