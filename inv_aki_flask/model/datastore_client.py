@@ -124,6 +124,10 @@ class DataStoreClient:
             expiration=expiration,
         )
 
+    def update_message_expiration(self, message, expire_at):
+        expiration = datetime.now() + timedelta(days=expire_at)
+        self._update(message, expiration=expiration)
+
     def get_session(self, sessionid):
         return self._select(
             kind=DataStoreClient.KIND_SESSION,
