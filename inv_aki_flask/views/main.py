@@ -17,8 +17,8 @@ else:
     model = ChatGPT()
 
 
-def generate_sessionid(id):
-    text = f"{id}_{datetime.now()}"
+def generate_sessionid(name):
+    text = f"{name}_{datetime.now()}"
     return md5(text.encode("utf-8")).hexdigest()
 
 
@@ -40,7 +40,7 @@ def put_message(res, sessionid, messageid):
     )
 
 
-def init_message(id):
+def init_message(name):
     msg = "\n".join(
         [
             "有名な人物やキャラクターを思い浮かべて．",
@@ -52,7 +52,7 @@ def init_message(id):
 
     message_data = [
         (
-            (f"アキ{id}", msg),
+            (f"アキ{name}", msg),
             ("ChatGPT", ans),
             0,
         )
@@ -63,11 +63,11 @@ def init_message(id):
 
 @view.route("/", methods=["GET"])
 def show():
-    if not session.get("login", False):
+    if "login" not in session or "name" not in session:
         return redirect(url_for("login.show"))
 
     if "messages" not in session:
-        session["messages"] = init_message(session["id"])
+        session["messages"] = init_message(session["name"])
         input_text = "男性キャラクター？"
     else:
         input_text = ""
@@ -76,13 +76,13 @@ def show():
         category, keyword = model.select_keyword()
         session["category"] = category
         session["keyword"] = keyword
-        session["sessionid"] = generate_sessionid(session["id"])
+        session["sessionid"] = generate_sessionid(session["name"])
         put_session(session["sessionid"], category=category, keyword=keyword)
 
     message_data = session["messages"]
     judged = "judged" in session
 
-    msg = f"Login ID: {session['id']}"
+    msg = f"Login ID: {session['name']}"
     return render_template(
         "main.html",
         title="逆アキネイター",
@@ -97,7 +97,7 @@ def show():
 
 @view.route("/", methods=["POST"])
 def post():
-    if not session.get("login", False):
+    if "login" not in session or "name" not in session:
         return redirect(url_for("login.show"))
 
     msg = request.form.get("comment")
@@ -115,7 +115,7 @@ def post():
         return redirect(url_for("main.show"))
 
     if "messages" not in session:
-        session["messages"] = init_message(session["id"])
+        session["messages"] = init_message(session["name"])
 
     message_data = session["messages"]
 
@@ -136,7 +136,7 @@ def post():
 
     message_data.append(
         (
-            (f"アキ{session['id']}", msg),
+            (f"アキ{session['name']}", msg),
             ("ChatGPT", ans),
             len(message_data),
         )

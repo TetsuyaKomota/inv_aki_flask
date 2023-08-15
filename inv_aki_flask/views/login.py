@@ -16,17 +16,17 @@ def show():
         title="ログイン画面",
         err=False,
         message="名前とパスワードを入力してください",
-        id="",
+        name="",
     )
 
 
 @view.route("/", methods=["POST"])
 def post():
-    id = request.form.get("id")
+    name = request.form.get("name")
     pswd = request.form.get("pass")
 
     session["login"] = False
-    if id == "":
+    if name == "":
         msg = "名前を入力してください"
     elif pswd != login_pswd:
         msg = "パスワードが違います"
@@ -34,12 +34,12 @@ def post():
         session["login"] = True
 
     # 名前を変更した際に，変更前の履歴が残っている場合は削除する
-    if "messages" in session and session.get("id", "") != id:
+    if "messages" in session and session.get("name", "") != name:
         session.pop("messages")
 
-    session["id"] = id
+    session["name"] = name
 
-    if session["login"]:
+    if session.get("login", False):
         return redirect("/main/")
     else:
         return render_template(
@@ -47,7 +47,7 @@ def post():
             title="ログイン画面",
             err=False,
             message=msg,
-            id=id,
+            name=name,
         )
 
 
