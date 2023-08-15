@@ -80,19 +80,22 @@ class ChatGPT:
 
     def select_category(self):
         category_list = [
-            "実在する動物",
-            "実在する日本人",
-            "実在する食べ物や料理",
-            "実在する文房具",
-            "実在する漫画やアニメのキャラクター",
-            "実在するディズニーキャラクター",
+            ("実在する動物", "あまり有名ではない"),
+            ("実在する虫", "多くの人が知っている"),
+            ("実在する日本人", "多くの人が知っている"),
+            ("実在する食べ物や料理", "多くの人が知っている"),
+            ("実在する文房具", "あまり有名ではない"),
+            ("実在する乗り物", "あまり有名ではない"),
+            ("実在する漫画やアニメのキャラクター", "多くの人が知っている"),
+            ("実在するゲームのキャラクター", "多くの人が知っている"),
+            ("実在するディズニーキャラクター", "多くの人が知っている"),
         ]
 
         return choice(category_list)
 
     def select_keyword(self):
-        category = self.select_category()
-        text = self.prompt_select.format(category=category)
+        category, difficulty = self.select_category()
+        text = self.prompt_select.format(category=category, difficulty=difficulty)
         for _ in range(ChatGPT.SELECT_MAX_RETRY):
             res = self.request_to_chatgpt(text)
             res = self.parse_select(res)
