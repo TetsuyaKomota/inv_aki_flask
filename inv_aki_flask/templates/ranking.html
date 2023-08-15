@@ -21,7 +21,7 @@
       <a href="{{ url_for('result.show', sessionid=item.key.name) }}">
        {{ item["keyword"] }}</td>
       </a>
-     <td>{{ item["rank"] }}</td>
+     <td>{{ item["count"] }}</td>
     </tr>
    {% endfor %}
   </tbody>

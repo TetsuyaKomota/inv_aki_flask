@@ -81,7 +81,7 @@ class DataStoreClient:
         )
 
     def update_session_entity(
-        self, sessionid, *, expire_at=None, public=None, rank=None, judge=None
+        self, sessionid, *, expire_at=None, public=None, count=None, judge=None
     ):
         session = self._select(
             kind=DataStoreClient.KIND_SESSION,
@@ -96,7 +96,7 @@ class DataStoreClient:
         else:
             expiration = None
         self._update(
-            session, expiration=expiration, public=public, rank=rank, judge=judge
+            session, expiration=expiration, public=public, count=count, judge=judge
         )
 
     def create_message_entity(
@@ -158,7 +158,7 @@ class DataStoreClient:
 
         # ランク順かつ，同ランクなら新しい順にソート
         entities = sorted(
-            entities, key=lambda x: (-x["rank"], x["expiration"]), reverse=True
+            entities, key=lambda x: (-x["count"], x["expiration"]), reverse=True
         )
 
         return entities

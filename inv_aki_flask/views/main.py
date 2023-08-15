@@ -131,7 +131,7 @@ def post():
         ans, judge = model.judge(msg, category, keyword)
         session["judged"] = True
         datastore_client.update_session_entity(
-            sessionid=sessionid, judge=judge, rank=messageid - 1  # 最初のセリフ分
+            sessionid=sessionid, judge=judge, count=messageid - 1  # 最初のセリフ分
         )
 
     message_data.append(
