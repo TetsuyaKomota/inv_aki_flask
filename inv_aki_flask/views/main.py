@@ -22,8 +22,10 @@ def generate_sessionid(id):
     return md5(text.encode("utf-8")).hexdigest()
 
 
-def put_session(sessionid, work, keyword):
-    datastore_client.create_session_entity(sessionid, work=work, keyword=keyword)
+def put_session(sessionid, category, keyword):
+    datastore_client.create_session_entity(
+        sessionid, category=category, keyword=keyword
+    )
 
 
 def put_message(res, sessionid, messageid):
@@ -71,11 +73,11 @@ def show():
         input_text = ""
 
     if "keyword" not in session:
-        work, keyword = model.select_keyword()
-        session["work"] = work
+        category, keyword = model.select_keyword()
+        session["category"] = category
         session["keyword"] = keyword
         session["sessionid"] = generate_sessionid(session["id"])
-        put_session(session["sessionid"], work=work, keyword=keyword)
+        put_session(session["sessionid"], category=category, keyword=keyword)
 
     message_data = session["messages"]
     judged = "judged" in session
@@ -107,7 +109,7 @@ def post():
         return redirect(url_for("result.show", sessionid=sessionid))
 
     if typ == "リセット":
-        for k in ["messages", "work", "keyword", "judged"]:
+        for k in ["messages", "category", "keyword", "judged"]:
             if k in session:
                 del session[k]
         return redirect(url_for("main.show"))
@@ -117,16 +119,16 @@ def post():
 
     message_data = session["messages"]
 
-    work = session.get("work", "")
+    category = session.get("category", "")
     keyword = session.get("keyword", "")
     messageid = len(message_data)
 
     if typ == "質問する":
-        ans, res = model.ask_answer(msg, work, keyword)
+        ans, res = model.ask_answer(msg, category, keyword)
         put_message(res, sessionid, messageid)
 
     elif typ == "回答する":
-        ans, judge = model.judge(msg, work, keyword)
+        ans, judge = model.judge(msg, category, keyword)
         session["judged"] = True
         datastore_client.update_session_entity(
             sessionid=sessionid, judge=judge, rank=messageid - 1  # 最初のセリフ分
