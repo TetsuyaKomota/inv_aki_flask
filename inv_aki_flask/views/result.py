@@ -16,11 +16,13 @@ def show(sessionid):
 @view.route("/", methods=["POST"])
 def post():
     sessionid = session.get("sessionid", "")
+    name = session.get("name", "")
     session_info = session_entity_client.get_session(sessionid=sessionid)
     if session_info.get("judge", False):
         session_entity_client.update_session_entity(
             sessionid=sessionid,
             public=True,
+            name=name,
             judge=False,  # 閲覧ページから再登録できないように
             expire_at=7,  # 記録したデータは7日間有効(FIXME 要調整)
         )
