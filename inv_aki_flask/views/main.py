@@ -5,7 +5,8 @@ from hashlib import md5
 from flask import Blueprint, redirect, render_template, request, session, url_for
 
 from inv_aki_flask.model.chatgpt import MAX_QUESTIONS, ChatGPT
-from inv_aki_flask.model.datastore_client import client as datastore_client
+from inv_aki_flask.model.datastore_client.message import client as message_entity_client
+from inv_aki_flask.model.datastore_client.session import client as session_entity_client
 
 view = Blueprint("main", __name__, url_prefix="/main")
 
@@ -23,13 +24,13 @@ def generate_sessionid(name):
 
 
 def put_session(sessionid, category, keyword):
-    datastore_client.create_session_entity(
+    session_entity_client.create_session_entity(
         sessionid, category=category, keyword=keyword
     )
 
 
 def put_message(res, sessionid, messageid):
-    datastore_client.create_message_entity(
+    message_entity_client.create_message_entity(
         sessionid=sessionid,
         messageid=messageid,
         question=res.get("question", ""),
@@ -130,7 +131,7 @@ def post():
     elif typ == "回答する":
         ans, judge = model.judge(msg, category, keyword)
         session["judged"] = True
-        datastore_client.update_session_entity(
+        session_entity_client.update_session_entity(
             sessionid=sessionid, judge=judge, count=messageid - 1  # 最初のセリフ分
         )
 
