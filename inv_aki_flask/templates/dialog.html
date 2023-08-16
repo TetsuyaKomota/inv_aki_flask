@@ -18,24 +18,59 @@
  {% if not judged %}
   <p class="col-xs-12">質問回数残り: {{max_count - ans_count}}</p>
  {% endif %}
- <form method="post" action="{{ url_for('main.post') }}">
- <div class="col-xs-12">
-  <input type="text" name="comment" value="{{ input_text }}" width="80" maxlength="20">
- </div>
+ <form method="post" action="{{ url_for('main.post') }}" onSubmit="return {{ device }}Hide();">
+ <div class="form-group">
+  <div class="col-xs-12">
+   <input type="text" id="{{ device }}InputComment" class="form-control" value="{{ input_text }}" width="80" maxlength="20">
+  </div>
  
- <div class="col-xs-12">
-  {% if not judged and ans_count < max_count %}
-  <input type="submit" name="action" value="質問する" class="btn">
-  {% endif %}
+  <div class="col-xs-12">
+   {% if not judged and ans_count < max_count %}
+   <input type="submit" id="{{ device }}InputBtnQ" value="質問する" class="btn btn-default col-xs-3">
+   {% endif %}
  
-  {% if not judged %}
-  <input type="submit" name="action" value="回答する" class="btn">
-  {% endif %}
+   {% if not judged %}
+   <input type="submit" id="{{ device }}InputBtnA" value="回答する" class="btn btn-default col-xs-3">
+   {% endif %}
 
-  {% if judged %}
-  <input type="submit" name="action" value="答え合わせ" class="btn">
-  {% endif %}
+   {% if judged %}
+   <input type="submit" id="{{ device }}InputBtnC" value="答え合わせする" class="btn btn-default col-xs-6">
+   {% endif %}
  
-  <input type="submit" name="action" value="リセット" class="btn">
+   <input type="submit" id="{{ device }}InputBtnR" value="リセット" class="btn btn-default col-xs-3 col-xs-offset-3">
+
+   <input type="hidden" name="action" value="" id="{{ device }}HiddenAction">
+   <input type="hidden" name="comment" value="" id="{{ device }}HiddenComment">
+  </div>
  </div>
 </form>
+
+<script>
+    function {{ device }}Hide() {
+    var submitButton = document.activeElement;
+    var actionValue = submitButton.value;
+    document.getElementById("{{ device }}HiddenAction").value = actionValue;
+
+    var commentValue = document.getElementById("{{ device }}InputComment").value;
+    document.getElementById("{{ device }}HiddenComment").value = commentValue;
+
+
+    if (document.getElementById("{{ device }}InputComment") !== null) {
+      document.getElementById("{{ device }}InputComment").disabled = true;
+    }
+    if (document.getElementById("{{ device }}InputBtnQ") !== null) {
+      document.getElementById("{{ device }}InputBtnQ").disabled = true;
+    }
+    if (document.getElementById("{{ device }}InputBtnA") !== null) {
+      document.getElementById("{{ device }}InputBtnA").disabled = true;
+    }
+    if (document.getElementById("{{ device }}InputBtnC") !== null) {
+      document.getElementById("{{ device }}InputBtnC").disabled = true;
+    }
+    if (document.getElementById("{{ device }}InputBtnR") !== null) {
+      document.getElementById("{{ device }}InputBtnR").disabled = true;
+    }
+
+    return true;
+}
+</script>
