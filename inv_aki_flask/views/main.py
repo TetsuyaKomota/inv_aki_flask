@@ -5,7 +5,8 @@ from hashlib import md5
 from flask import Blueprint, redirect, render_template, request, session, url_for
 
 from inv_aki_flask.model.chatgpt import MAX_QUESTIONS, ChatGPT
-from inv_aki_flask.model.datastore_client import client as datastore_client
+from inv_aki_flask.model.datastore_client.message import client as message_entity_client
+from inv_aki_flask.model.datastore_client.session import client as session_entity_client
 
 view = Blueprint("main", __name__, url_prefix="/main")
 
@@ -17,19 +18,19 @@ else:
     model = ChatGPT()
 
 
-def generate_sessionid(id):
-    text = f"{id}_{datetime.now()}"
+def generate_sessionid(name):
+    text = f"{name}_{datetime.now()}"
     return md5(text.encode("utf-8")).hexdigest()
 
 
 def put_session(sessionid, category, keyword):
-    datastore_client.create_session_entity(
+    session_entity_client.create_session_entity(
         sessionid, category=category, keyword=keyword
     )
 
 
 def put_message(res, sessionid, messageid):
-    datastore_client.create_message_entity(
+    message_entity_client.create_message_entity(
         sessionid=sessionid,
         messageid=messageid,
         question=res.get("question", ""),
@@ -40,7 +41,7 @@ def put_message(res, sessionid, messageid):
     )
 
 
-def init_message(id):
+def init_message(name):
     msg = "\n".join(
         [
             "有名な人物やキャラクターを思い浮かべて．",
@@ -52,7 +53,7 @@ def init_message(id):
 
     message_data = [
         (
-            (f"アキ{id}", msg),
+            (f"アキ{name}", msg),
             ("ChatGPT", ans),
             0,
         )
@@ -63,11 +64,11 @@ def init_message(id):
 
 @view.route("/", methods=["GET"])
 def show():
-    if not session.get("login", False):
+    if "login" not in session or "name" not in session:
         return redirect(url_for("login.show"))
 
     if "messages" not in session:
-        session["messages"] = init_message(session["id"])
+        session["messages"] = init_message(session["name"])
         input_text = "男性キャラクター？"
     else:
         input_text = ""
@@ -76,13 +77,13 @@ def show():
         category, keyword = model.select_keyword()
         session["category"] = category
         session["keyword"] = keyword
-        session["sessionid"] = generate_sessionid(session["id"])
+        session["sessionid"] = generate_sessionid(session["name"])
         put_session(session["sessionid"], category=category, keyword=keyword)
 
     message_data = session["messages"]
     judged = "judged" in session
 
-    msg = f"Login ID: {session['id']}"
+    msg = f"Login ID: {session['name']}"
     return render_template(
         "main.html",
         title="逆アキネイター",
@@ -97,7 +98,7 @@ def show():
 
 @view.route("/", methods=["POST"])
 def post():
-    if not session.get("login", False):
+    if "login" not in session or "name" not in session:
         return redirect(url_for("login.show"))
 
     msg = request.form.get("comment")
@@ -115,7 +116,7 @@ def post():
         return redirect(url_for("main.show"))
 
     if "messages" not in session:
-        session["messages"] = init_message(session["id"])
+        session["messages"] = init_message(session["name"])
 
     message_data = session["messages"]
 
@@ -128,15 +129,28 @@ def post():
         put_message(res, sessionid, messageid)
 
     elif typ == "回答する":
-        ans, judge = model.judge(msg, category, keyword)
         session["judged"] = True
-        datastore_client.update_session_entity(
-            sessionid=sessionid, judge=judge, rank=messageid - 1  # 最初のセリフ分
+        ans, res = model.judge(msg, category, keyword)
+
+        answer = msg
+        explain1 = res.get("explain1", None)
+        explain2 = res.get("explain2", None)
+        reason = res.get("reason", None)
+        judge = ans.startswith("正解！")
+
+        session_entity_client.update_session_entity(
+            sessionid=sessionid,
+            count=messageid - 1,  # 最初のセリフ分
+            answer=answer,
+            explain1=explain1,
+            explain2=explain2,
+            reason=reason,
+            judge=judge,
         )
 
     message_data.append(
         (
-            (f"アキ{session['id']}", msg),
+            (f"アキ{session['name']}", msg),
             ("ChatGPT", ans),
             len(message_data),
         )

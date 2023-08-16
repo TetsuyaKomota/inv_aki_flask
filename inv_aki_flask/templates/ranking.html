@@ -8,20 +8,22 @@
  <table class="table table-hover">
   <thead>
     <tr>
-     <th>ランキング</th>
-     <th>キーワード</th>
-     <th>質問回数</th>
+     <th>順位</th>
+     <th>名前</th>
+     <th>答え</th>
+     <th>質問</th>
     </tr>
   </thead>
   <tbody>
    {% for rank, item in session_infos %}
     <tr>
      <td>{{ rank }}</td>
+     <td>{{ item.get("name", "") }}</td>
      <td>
       <a href="{{ url_for('result.show', sessionid=item.key.name) }}">
        {{ item["keyword"] }}</td>
       </a>
-     <td>{{ item["rank"] }}</td>
+     <td>{{ item["count"] }}回</td>
     </tr>
    {% endfor %}
   </tbody>

@@ -53,29 +53,41 @@ class ChatGPT:
 
     def parse_select(self, res):
         output = {}
+        kv = {
+            "対象の名称: ": "keyword",
+        }
         for line in res.split("\n"):
-            if line.startswith("対象の名称: "):
-                output["keyword"] = line.strip()[len("対象の名称: ") :]
+            for k, v in kv.items():
+                if line.startswith(k):
+                    output[v] = line.strip()[len(k) :]
         return output
 
     def parse_answer(self, res):
         output = {}
+        kv = {
+            "理由1: ": "reason1",
+            "理由2: ": "reason2",
+            "理由3: ": "reason3",
+            "返答: ": "answer",
+        }
         for line in res.split("\n"):
-            if line.startswith("理由1: "):
-                output["reason1"] = line.strip()[len("理由1: ") :]
-            if line.startswith("理由2: "):
-                output["reason2"] = line.strip()[len("理由2: ") :]
-            if line.startswith("理由3: "):
-                output["reason3"] = line.strip()[len("理由3: ") :]
-            if line.startswith("返答: "):
-                output["answer"] = line.strip()[len("返答: ") :]
+            for k, v in kv.items():
+                if line.startswith(k):
+                    output[v] = line.strip()[len(k) :]
         return output
 
     def parse_judge(self, res):
         output = {}
+        kv = {
+            "キーワード1の説明: ": "explain1",
+            "キーワード2の説明: ": "explain2",
+            "2つが同じものか判断した理由: ": "reason",
+            "返答: ": "judge",
+        }
         for line in res.split("\n"):
-            if line.startswith("返答: "):
-                output["judge"] = line.strip()[len("返答: ") :]
+            for k, v in kv.items():
+                if line.startswith(k):
+                    output[v] = line.strip()[len(k) :]
         return output
 
     def select_category(self):
@@ -158,7 +170,7 @@ class ChatGPT:
 
         self.logging(answer)
 
-        return answer, (judge == "正解！")
+        return answer, res
 
     def request_to_chatgpt_mock(self, content):
         if content.startswith("アニメのキャラクターの名前を"):

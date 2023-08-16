@@ -20,7 +20,7 @@
  {% endif %}
  <form method="post" action="{{ url_for('main.post') }}">
  <div class="col-xs-12">
-  <input type="text" name="comment" value="{{ input_text }}" width="80">
+  <input type="text" name="comment" value="{{ input_text }}" width="80" maxlength="20">
  </div>
  
  <div class="col-xs-12">
