@@ -27,7 +27,17 @@ class SessionEntityClient(DataStoreClient):
         )
 
     def update_session_entity(
-        self, sessionid, *, expire_at=None, public=None, count=None, judge=None
+        self,
+        sessionid,
+        *,
+        expire_at=None,
+        public=None,
+        count=None,
+        answer=None,
+        explain1=None,
+        explain2=None,
+        reason=None,
+        judge=None,
     ):
         session = self._select(
             kind=SessionEntityClient.KIND_SESSION,
@@ -42,7 +52,15 @@ class SessionEntityClient(DataStoreClient):
         else:
             expiration = None
         self._update(
-            session, expiration=expiration, public=public, count=count, judge=judge
+            session,
+            expiration=expiration,
+            public=public,
+            count=count,
+            answer=answer,
+            explain1=explain1,
+            explain2=explain2,
+            reason=reason,
+            judge=judge,
         )
 
     def get_session(self, sessionid):

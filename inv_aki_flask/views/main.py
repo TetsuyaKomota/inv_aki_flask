@@ -129,10 +129,23 @@ def post():
         put_message(res, sessionid, messageid)
 
     elif typ == "回答する":
-        ans, judge = model.judge(msg, category, keyword)
         session["judged"] = True
+        ans, res = model.judge(msg, category, keyword)
+
+        answer = msg
+        explain1 = res.get("explain1", None)
+        explain2 = res.get("explain2", None)
+        reason = res.get("reason", None)
+        judge = ans.startswith("正解！")
+
         session_entity_client.update_session_entity(
-            sessionid=sessionid, judge=judge, count=messageid - 1  # 最初のセリフ分
+            sessionid=sessionid,
+            count=messageid - 1,  # 最初のセリフ分
+            answer=answer,
+            explain1=explain1,
+            explain2=explain2,
+            reason=reason,
+            judge=judge,
         )
 
     message_data.append(
