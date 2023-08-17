@@ -47,8 +47,8 @@
 
 <script>
     function {{ device }}Hide() {
-    var submitButton = document.activeElement;
-    var actionValue = submitButton.value;
+
+    const actionValue = event.submitter.value;
     document.getElementById("{{ device }}HiddenAction").value = actionValue;
 
     var commentValue = document.getElementById("{{ device }}InputComment").value;
