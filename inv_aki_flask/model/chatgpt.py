@@ -4,6 +4,7 @@ from datetime import datetime
 from random import choice
 
 import openai
+import pandas as pd
 
 from inv_aki_flask.model.secret_client import SecretClient
 
@@ -31,6 +32,12 @@ class ChatGPT:
         self.prompt_select = self.load_prompt("template_select.txt")
         self.prompt_answer = self.load_prompt("template_answer.txt")
         self.prompt_judge = self.load_prompt("template_judge.txt")
+
+        # キーワード選択のモード
+        # True : 前もって作成したリストから選択
+        # False: 毎回プロンプトでChatGPTから取得
+        self.is_select_from_list = True
+        self.keyword_list = pd.read_csv("inv_aki_flask/lib/keyword_list.tsv", sep="\t")
 
     def set_api_key(self, api_key=None):
         self.is_active = False
@@ -106,6 +113,16 @@ class ChatGPT:
         return choice(category_list)
 
     def select_keyword(self):
+        if self.is_select_from_list:
+            return self.select_keyword_from_list()
+        else:
+            return self.select_keyword_from_prompt()
+
+    def select_keyword_from_list(self):
+        r = self.keyword_list.sample().iloc[0]
+        return r.category, r.keyword
+
+    def select_keyword_from_prompt(self):
         category, difficulty = self.select_category()
         text = self.prompt_select.format(category=category, difficulty=difficulty)
         for _ in range(ChatGPT.SELECT_MAX_RETRY):
