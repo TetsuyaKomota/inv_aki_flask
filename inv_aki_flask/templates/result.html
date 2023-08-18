@@ -114,7 +114,7 @@
 
  {% if session_info.get("judge", False) %}
  <form method="post" action="{{ url_for('result.post') }}">
-  <input type="submit" name="action" value="結果を記録する" class="btn">
+  <input type="submit" name="action" value="結果を記録する" class="btn btn-default">
  </form>
  {% endif %}
 
