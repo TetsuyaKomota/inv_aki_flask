@@ -110,7 +110,7 @@ def post():
 
     sessionid = session.get("sessionid", "")
 
-    if typ == "答え合わせ":
+    if typ == "答え合わせする":
         return redirect(url_for("result.show", sessionid=sessionid))
 
     if typ == "リセット":
