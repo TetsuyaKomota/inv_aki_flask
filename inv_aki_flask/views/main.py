@@ -84,13 +84,22 @@ def show():
     judged = "judged" in session
 
     msg = f"Login ID: {session['name']}"
+
+    viewad = session.get("viewad", False)
+    ans_count = len(message_data) - 1  # 最初のセリフ分
+    if viewad:
+        max_count = MAX_QUESTIONS * 2
+    else:
+        max_count = MAX_QUESTIONS
+
     return render_template(
         "main.html",
         title="逆アキネイター",
         message=msg,
         data=message_data,
-        ans_count=len(message_data) - 1,  # 最初のセリフ分
-        max_count=MAX_QUESTIONS,
+        ans_count=ans_count,
+        max_count=max_count,
+        ad_disabled="disabled" if viewad else "",
         judged=judged,
         input_text=input_text,
     )
@@ -109,8 +118,12 @@ def post():
     if typ == "答え合わせする":
         return redirect(url_for("result.show", sessionid=sessionid))
 
+    if typ == "広告を視聴して質問回数を増やす":
+        session["viewad"] = True
+        return redirect(url_for("main.show"))
+
     if typ == "リセット":
-        for k in ["messages", "category", "keyword", "judged"]:
+        for k in ["messages", "category", "keyword", "judged", "viewad"]:
             if k in session:
                 del session[k]
         return redirect(url_for("main.show"))
