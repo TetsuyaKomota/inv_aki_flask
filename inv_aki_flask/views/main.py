@@ -104,13 +104,9 @@ def post():
     msg = request.form.get("comment")
     typ = request.form.get("action")
 
-    # Enterで送信した場合，typ==msg になってしまう(TODO 要修正)
-    if msg == typ:
-        typ = "質問する"
-
     sessionid = session.get("sessionid", "")
 
-    if typ == "答え合わせ":
+    if typ == "答え合わせする":
         return redirect(url_for("result.show", sessionid=sessionid))
 
     if typ == "リセット":
