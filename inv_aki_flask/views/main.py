@@ -84,6 +84,9 @@ def show():
     judged = "judged" in session
 
     msg = f"Login ID: {session['name']}"
+
+    notice = session.get("notice", "")
+
     return render_template(
         "main.html",
         title="逆アキネイター",
@@ -93,6 +96,7 @@ def show():
         max_count=MAX_QUESTIONS,
         judged=judged,
         input_text=input_text,
+        notice=notice,
     )
 
 
@@ -110,10 +114,22 @@ def post():
         return redirect(url_for("result.show", sessionid=sessionid))
 
     if typ == "リセット":
-        for k in ["messages", "category", "keyword", "judged"]:
+        for k in ["messages", "category", "keyword", "judged", "notice"]:
             if k in session:
                 del session[k]
         return redirect(url_for("main.show"))
+
+    # comment が空の場合は警告出す
+    if not msg:
+        if typ == "質問する":
+            target = "質問"
+        elif typ == "回答する":
+            target = "キーワード"
+        session["notice"] = f"{target}を入力してください"
+        return redirect(url_for("main.show"))
+    else:
+        if "notice" in session:
+            del session["notice"]
 
     if "messages" not in session:
         session["messages"] = init_message(session["name"])
