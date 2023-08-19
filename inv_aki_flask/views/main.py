@@ -85,6 +85,8 @@ def show():
 
     msg = f"Login ID: {session['name']}"
 
+    notice = session.get("notice", "")
+
     viewad = session.get("viewad", False)
     ans_count = len(message_data) - 1  # 最初のセリフ分
     if viewad:
@@ -102,6 +104,7 @@ def show():
         ad_disabled="disabled" if viewad else "",
         judged=judged,
         input_text=input_text,
+        notice=notice,
     )
 
 
@@ -123,10 +126,22 @@ def post():
         return redirect(url_for("main.show"))
 
     if typ == "リセット":
-        for k in ["messages", "category", "keyword", "judged", "viewad"]:
+        for k in ["messages", "category", "keyword", "judged", "notice", "viewed"]:
             if k in session:
                 del session[k]
         return redirect(url_for("main.show"))
+
+    # comment が空の場合は警告出す
+    if not msg:
+        if typ == "質問する":
+            target = "質問"
+        elif typ == "回答する":
+            target = "キーワード"
+        session["notice"] = f"{target}を入力してください"
+        return redirect(url_for("main.show"))
+    else:
+        if "notice" in session:
+            del session["notice"]
 
     if "messages" not in session:
         session["messages"] = init_message(session["name"])
