@@ -90,7 +90,7 @@ def show():
     viewad = session.get("viewad", False)
     ans_count = len(message_data) - 1  # 最初のセリフ分
     if viewad:
-        max_count = MAX_QUESTIONS * 2
+        max_count = MAX_QUESTIONS * 3
     else:
         max_count = MAX_QUESTIONS
 
