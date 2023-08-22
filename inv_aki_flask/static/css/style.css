@@ -62,7 +62,7 @@ pre {
   
   #img-player {
     position: fixed;
-    top: 45%; /* 画面の中央に配置 */
+    top: 40%; /* 画面の中央に配置 */
     transform: translateY(-50%); /* 上下中央揃え */
     left: 0; /* 左寄せ */
     z-index: -1; /* 背面に移動 */

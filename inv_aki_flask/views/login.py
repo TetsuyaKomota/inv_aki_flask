@@ -11,19 +11,21 @@ login_pswd = secret_client.get_secret("login_pswd")
 
 @view.route("/", methods=["GET"])
 def show():
+    name = session.get("name", "ネイター")
     return render_template(
         "login.html",
         title="ログイン画面",
         err=False,
-        message="名前とパスワードを入力してください",
-        name="",
+        message="名前を入力してください",
+        name=name,
     )
 
 
 @view.route("/", methods=["POST"])
 def post():
     name = request.form.get("name")
-    pswd = request.form.get("pass")
+    # pswd = request.form.get("pass")
+    pswd = login_pswd  # パスワードが必要な場合は修正
 
     session["login"] = False
     if name == "":
