@@ -9,6 +9,10 @@
 
  <!-- スマホ版の質問返答一覧(expand形式) -->
  <div class="hidden-md hidden-lg">
+  {% if thank %}
+   <p class="text-success bg-success small">{{ thank }}</p>
+  {% endif %}
+
   {% for item in messages %}
   <div class="panel-group">
    <div class="panel panel-default">
@@ -39,7 +43,61 @@
       <div class="panel-body col-xs-8">{{ item["reason3"] }}</div>
       {% endif%}
       <!-- 誤り報告ボタン．まだ見た目だけ-->
-      <input type="button" value="誤りを報告する" class="btn btn-default col-xs-6 col-xs-offset-3">
+
+      {% if judged %}
+      <form method="post" action="{{ url_for('result.report') }}" onSubmit="return {{ device }}Hide();">
+       <div class="form-group">
+        <input type="button" 
+        value="誤りを報告する" 
+        class="btn btn-default col-xs-6 col-xs-offset-3" 
+        data-toggle="modal" 
+        data-target="#report{{ item.key['id'] }}"
+        >
+        <input type="hidden" name="sessionid" value="{{ sessionid }}">
+        <input type="hidden" name="messageid" value="{{ item.key['id'] }}">
+        <input type="hidden" name="keyword" value="{{ session_info["keyword"] }}">
+        <input type="hidden" name="question" value="{{ item["question"] }}">
+        <input type="hidden" name="answer" value="{{ item["answer"] }}">
+        <div id="report{{ item.key['id'] }}" class="modal fade" role="dialog">
+         <div class="modal-dialog">
+          <!-- Modal content-->
+          <div class="modal-content">
+           <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+             <h4 class="modal-title">こちらの返答は間違っていますか？</h4>
+           </div>
+           <div class="modal-body">
+            <div class="panel-group">
+             <div class="panel-body col-xs-4">キーワード</div>
+             <div class="panel-body col-xs-8">{{ session_info["keyword"] }}</div>
+
+             <div class="panel-body col-xs-4">質問</div>
+             <div class="panel-body col-xs-8">{{ item["question"] }}</div>
+
+             <div class="panel-body col-xs-4">返答</div>
+             <div class="panel-body col-xs-8">{{ item["answer"] }}</div>
+
+             <div class="panel-body col-xs-4">正しい返答</div>
+             <div class="form-group col-xs-8">
+              <select class="form-control" name="correct">
+               <option>はい</option>
+               <option>いいえ</option>
+               <option>わからない</option>
+               <option>どちらかといえばはい</option>
+               <option>どちらかといえばいいえ</option>
+              </select>
+             </div>
+            </div>
+           </div>
+           <div class="modal-footer">
+            <input type="submit" value="送信" class="btn btn-default col-xs-3">
+           </div>
+          </div>
+         </div>
+        </div>
+       </div>
+      </form>
+      {% endif %}
      </div>
     </div>
    </div>
