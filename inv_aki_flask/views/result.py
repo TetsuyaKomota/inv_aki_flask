@@ -24,13 +24,13 @@ def post():
             public=True,
             name=name,
             judge=False,  # 閲覧ページから再登録できないように
-            expire_at=7,  # 記録したデータは7日間有効(FIXME 要調整)
+            expire_at=30,  # 記録したデータは30日間有効(FIXME 要調整)
         )
         messages = message_entity_client.get_messages(sessionid=sessionid)
         for message in messages:
             message_entity_client.update_message_expiration(
                 message,
-                expire_at=7,  # 記録したデータは7日間有効(FIXME 要調整)
+                expire_at=30,  # 記録したデータは30日間有効(FIXME 要調整)
             )
 
     return redirect(url_for("ranking.show"))
