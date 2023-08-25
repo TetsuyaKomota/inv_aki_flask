@@ -69,7 +69,7 @@ def show():
 
     if "messages" not in session:
         session["messages"] = init_message(session["name"])
-        input_text = "男性キャラクター？"
+        input_text = "漫画やアニメに登場する？"
     else:
         input_text = ""
 
