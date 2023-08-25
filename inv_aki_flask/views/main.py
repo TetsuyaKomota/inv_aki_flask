@@ -69,7 +69,7 @@ def show():
 
     if "messages" not in session:
         session["messages"] = init_message(session["name"])
-        input_text = "男性キャラクター？"
+        input_text = "漫画やアニメに登場する？"
     else:
         input_text = ""
 
@@ -126,7 +126,7 @@ def post():
         return redirect(url_for("main.show"))
 
     if typ == "リセット":
-        for k in ["messages", "category", "keyword", "judged", "notice", "viewed"]:
+        for k in ["messages", "category", "keyword", "judged", "notice", "viewad"]:
             if k in session:
                 del session[k]
         return redirect(url_for("main.show"))
