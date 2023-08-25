@@ -126,7 +126,7 @@ def post():
         return redirect(url_for("main.show"))
 
     if typ == "リセット":
-        for k in ["messages", "category", "keyword", "judged", "notice", "viewed"]:
+        for k in ["messages", "category", "keyword", "judged", "notice", "viewad"]:
             if k in session:
                 del session[k]
         return redirect(url_for("main.show"))
