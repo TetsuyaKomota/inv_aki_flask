@@ -12,7 +12,7 @@ def show(sessionid):
     session_info = session_entity_client.get_session(sessionid=sessionid)
     messages = message_entity_client.get_messages(sessionid=sessionid)
 
-    judged = session.get("judged", False)
+    is_same_session = sessionid == session.get("sessionid", "")
 
     thank = session.get("thank", "")
 
@@ -24,7 +24,7 @@ def show(sessionid):
         sessionid=sessionid,
         session_info=session_info,
         messages=messages,
-        judged=judged,
+        is_same_session=is_same_session,
         thank=thank,
     )
 

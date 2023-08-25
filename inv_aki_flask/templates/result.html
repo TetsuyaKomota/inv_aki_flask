@@ -44,7 +44,7 @@
       {% endif%}
       <!-- 誤り報告ボタン．まだ見た目だけ-->
 
-      {% if judged %}
+      {% if is_same_session %}
       <form method="post" action="{{ url_for('result.report') }}" onSubmit="return {{ device }}Hide();">
        <div class="form-group">
         <input type="button" 
