@@ -61,7 +61,10 @@ def init_message(name: str) -> DialogData:
 @view.route("/", methods=["GET"])
 def show():
     if "login" not in session or "name" not in session:
-        return redirect(url_for("login.show"))
+        # return redirect(url_for("login.show"))
+        # FIXME 審査用
+        session["login"] = True
+        session["name"] = "ネイター"
 
     if "messages" not in session:
         session["messages"] = init_message(session["name"]).to_args()
@@ -107,7 +110,10 @@ def show():
 @view.route("/", methods=["POST"])
 def post():
     if "login" not in session or "name" not in session:
-        return redirect(url_for("login.show"))
+        # return redirect(url_for("login.show"))
+        # FIXME 審査用
+        session["login"] = True
+        session["name"] = "ネイター"
 
     msg = request.form.get("comment")
     typ = request.form.get("action")
