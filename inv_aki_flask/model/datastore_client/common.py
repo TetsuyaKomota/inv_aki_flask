@@ -1,4 +1,28 @@
+from typing import Callable
+
 from google.cloud import datastore
+
+
+def validate_key(f: Callable) -> Callable:
+    def _f(self, kind="", keyid="", parent_kind="", parent_keyid="", **properties):
+        if (parent_kind == "") != (parent_keyid == ""):
+            raise InvalidKeyException(
+                "\n".join(
+                    [
+                        "parent_kind, parent_keyid の一方が指定されていません: ",
+                        f"parent_kind={parent_kind}, parent_keyid={parent_keyid}",
+                    ]
+                )
+            )
+
+        if parent_kind != "" and parent_keyid != "":
+            key = self.client.key(parent_kind, parent_keyid, kind, keyid)
+        else:
+            key = self.client.key(kind, keyid)
+
+        return f(self, key=key, **properties)
+
+    return _f
 
 
 class InvalidKeyException(Exception):
@@ -8,27 +32,6 @@ class InvalidKeyException(Exception):
 class DataStoreClient:
     def __init__(self):
         self.client = datastore.Client()
-
-    def validate_key(f):
-        def _f(self, kind="", keyid="", parent_kind="", parent_keyid="", **properties):
-            if (parent_kind == "") != (parent_keyid == ""):
-                raise InvalidKeyException(
-                    "\n".join(
-                        [
-                            "parent_kind, parent_keyid の一方が指定されていません: ",
-                            f"parent_kind={parent_kind}, parent_keyid={parent_keyid}",
-                        ]
-                    )
-                )
-
-            if parent_kind != "" and parent_keyid != "":
-                key = self.client.key(parent_kind, parent_keyid, kind, keyid)
-            else:
-                key = self.client.key(kind, keyid)
-
-            return f(self, key=key, **properties)
-
-        return _f
 
     @validate_key
     def _upsert(self, key, **properties):

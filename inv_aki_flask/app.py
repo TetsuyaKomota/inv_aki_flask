@@ -16,7 +16,7 @@ app.secret_key = md5(
 ).hexdigest()
 
 
-def launch_for_local(degub=False):
+def launch_for_local(debug: bool = False) -> None:
     app.run(port=8000, debug=debug)
 
 
