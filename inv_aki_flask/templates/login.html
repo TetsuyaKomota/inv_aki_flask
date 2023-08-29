@@ -1,14 +1,17 @@
 {% extends "layout.html" %}
 
 {% block title %}
-Login
+ログイン画面
 {% endblock %}
 
 {% block headline %}
-{{ title }}
+ログイン画面
 {% endblock %}
 
 {% block content %}
+
+
+
 <p>{{ message }}</p>
 
 <form method="post" action="{{ url_for('login.post') }}">
@@ -22,12 +25,102 @@ Login
    </tr>
    <th></th>
    <td>
-    <input type="submit" value="ログイン" class="btn btn-default">
+    <input 
+     type="submit" 
+     value="ログイン" 
+     class="btn btn-default col-xs-4 col-md-1"
+     >
+    <button 
+     type="button" 
+     class="btn btn-default col-xs-6 col-xs-offset-2 col-md-2 col-md-offset-1" 
+     onclick="location.href={{ url_for('ranking.show') }}"
+     >
+     ランキングを見る
+    </button>
    </td>
   </table>
  </div>
 </form>
 
-<a href="{{ url_for('ranking.show') }}">ランキングを見る</a>
+<div class="panel-group col-xs-12">
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        <a data-toggle="collapse" href="#collapse2">このゲームについて</a>
+      </h4>
+    </div>
+    <div id="collapse2" class="panel-collapse collapse">
+      <ul class="list-group">
+        <li class="list-group-item">
+         <p>限られた回数の質問に対する返答から</p>
+         <p>ChatGPTの考えているものを当てる，</p>
+         <p>いわゆる「逆アキネイター」ゲームです</p>
+        </li>
+        <li class="list-group-item">
+         <p>プレイヤーの質問に対し，ChatGPTは</p>
+         <p>「はい」</p>
+         <p>「いいえ」</p>
+         <p>「わからない」</p>
+         <p>「どちらかといえばはい」</p>
+         <p>「どちらかといえばいいえ」</p>
+         <p>のいずれかで返答してきます</p>
+        </li>
+        <li class="list-group-item">
+         <p>ChatGPTのさじ加減で返答するため，</p>
+         <p>正しくないことを言うこともあるので</p>
+         <p>注意してください</p>
+        </li>
+        <li class="list-group-item">
+         <p>たまにChatGPTの気まぐれで，</p>
+         <p>上記以外の返答をすることもあります</p>
+        </li>
+        <li class="list-group-item">
+         <p>ChatGPTの考えているものが分かったら</p>
+         <p>キーワードを入力して</p>
+         <p>「回答する」ボタンを押してください</p>
+        </li>
+        <li class="list-group-item">
+         <p>回答したキーワードが正解かどうか</p>
+         <p>ChatGPTが判定してくれます</p>
+        </li>
+        <li class="list-group-item">
+         <p>たまに正しいキーワードなのに</p>
+         <p>不正解といわれたり，</p>
+         <p>正しくないキーワードなのに</p>
+         <p>正解といわれたりします</p>
+         <p>ご容赦ください</p>
+        </li>
+        <li class="list-group-item">
+         <p>たまに，そもそも存在しない</p>
+         <p>キーワードが答えになっている</p>
+         <p>場合もあります</p>
+         <p>ご容赦ください</p>
+        </li>
+        <li class="list-group-item">
+         <p>回答後，「答え合わせ」を押すと，</p>
+         <p>ChatGPTが何故その返答をしたのか</p>
+         <p>理由を確認することができます</p>
+        </li>
+        <li class="list-group-item">
+         <p>返答が明らかに間違っている場合は</p>
+         <p>「誤りを報告する」ボタンを押すと</p>
+         <p>正しい返答を送信することができます</p>
+        </li>
+        <li class="list-group-item">
+         <p>送信いただいた内容は</p>
+         <p>今後のシステム改善に利用させて</p>
+         <p>いただく予定です</p>
+        </li>
+        <li class="list-group-item">
+         <p>見事正解出来た場合は，</p>
+         <p>「結果を記録する」ボタンを押すと，</p>
+         <p>ランキングに登録することができます</p>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+
 
 {% endblock %}
