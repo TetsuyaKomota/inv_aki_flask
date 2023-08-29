@@ -18,6 +18,10 @@ pandas = "^2.0.3"
 [tool.poetry.scripts]
 inv_aki_flask = 'inv_aki_flask.app:launch_for_local'
 
+[tool.bandit]
+exclude_dirs = ["tests"]
+skips = ["B311"]
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"

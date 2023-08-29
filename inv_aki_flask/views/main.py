@@ -20,7 +20,7 @@ else:
 
 def generate_sessionid(name):
     text = f"{name}_{datetime.now()}"
-    return md5(text.encode("utf-8")).hexdigest()
+    return md5(text.encode("utf-8"), usedforsecurity=False).hexdigest()
 
 
 def put_session(sessionid, category, keyword):
