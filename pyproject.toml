@@ -18,6 +18,21 @@ pandas = "^2.0.3"
 [tool.poetry.scripts]
 inv_aki_flask = 'inv_aki_flask.app:launch_for_local'
 
+[tool.bandit]
+exclude_dirs = ["tests"]
+skips = ["B311"]
+
+[tool.mypy]
+python_version = "3.9"
+ignore_missing_imports = true
+warn_return_any = true
+disallow_incomplete_defs = true
+strict_optional = true
+# disallow_untyped_defs = true
+# disallow_any_expr = true
+# disallow_any_generics = true
+
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"

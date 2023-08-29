@@ -7,29 +7,30 @@ from flask import Blueprint, redirect, render_template, request, session, url_fo
 from inv_aki_flask.model.chatgpt import MAX_QUESTIONS, ChatGPT
 from inv_aki_flask.model.datastore_client.message import client as message_entity_client
 from inv_aki_flask.model.datastore_client.session import client as session_entity_client
+from inv_aki_flask.model.dialog import DialogData
 
 view = Blueprint("main", __name__, url_prefix="/main")
 
 if os.path.exists("tmp/api_key.txt"):
     with open("tmp/api_key.txt", "r") as f:
         api_key = f.read().strip()
-    model = ChatGPT(api_key, "")
+    model = ChatGPT(api_key)
 else:
     model = ChatGPT()
 
 
-def generate_sessionid(name):
+def generate_sessionid(name: str) -> str:
     text = f"{name}_{datetime.now()}"
-    return md5(text.encode("utf-8")).hexdigest()
+    return md5(text.encode("utf-8"), usedforsecurity=False).hexdigest()
 
 
-def put_session(sessionid, category, keyword):
+def put_session(sessionid: str, category: str, keyword: str) -> None:
     session_entity_client.create_session_entity(
         sessionid, category=category, keyword=keyword
     )
 
 
-def put_message(res, sessionid, messageid):
+def put_message(res: dict[str, str], sessionid: str, messageid: str) -> None:
     message_entity_client.create_message_entity(
         sessionid=sessionid,
         messageid=messageid,
@@ -41,7 +42,7 @@ def put_message(res, sessionid, messageid):
     )
 
 
-def init_message(name):
+def init_message(name: str) -> DialogData:
     msg = "\n".join(
         [
             "有名な人物やキャラクターを思い浮かべて．",
@@ -51,13 +52,8 @@ def init_message(name):
 
     ans = "よーし，やってみるぞー"
 
-    message_data = [
-        (
-            (f"アキ{name}", msg),
-            ("ChatGPT", ans),
-            0,
-        )
-    ]
+    message_data = DialogData(player_name=f"アキ{name}", system_name="ChatGPT")
+    message_data.add(msg, ans)
 
     return message_data
 
@@ -68,7 +64,7 @@ def show():
         return redirect(url_for("login.show"))
 
     if "messages" not in session:
-        session["messages"] = init_message(session["name"])
+        session["messages"] = init_message(session["name"]).to_args()
         input_text = "漫画やアニメに登場する？"
     else:
         input_text = ""
@@ -80,7 +76,7 @@ def show():
         session["sessionid"] = generate_sessionid(session["name"])
         put_session(session["sessionid"], category=category, keyword=keyword)
 
-    message_data = session["messages"]
+    message_data = DialogData(*session["messages"])
     judged = "judged" in session
 
     msg = f"Login ID: {session['name']}"
@@ -144,9 +140,9 @@ def post():
             del session["notice"]
 
     if "messages" not in session:
-        session["messages"] = init_message(session["name"])
+        session["messages"] = init_message(session["name"]).to_args()
 
-    message_data = session["messages"]
+    message_data = DialogData(*session["messages"])
 
     category = session.get("category", "")
     keyword = session.get("keyword", "")
@@ -176,14 +172,8 @@ def post():
             judge=judge,
         )
 
-    message_data.append(
-        (
-            (f"アキ{session['name']}", msg),
-            ("ChatGPT", ans),
-            len(message_data),
-        )
-    )
+    message_data.add(msg, ans)
 
-    session["messages"] = message_data
+    session["messages"] = message_data.to_args()
 
     return redirect(url_for("main.show"))

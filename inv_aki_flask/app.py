@@ -11,8 +11,14 @@ app.register_blueprint(main.view)
 app.register_blueprint(login.view)
 app.register_blueprint(result.view)
 app.register_blueprint(ranking.view)
-app.secret_key = md5(str(datetime.now()).encode("utf-8")).hexdigest()
+app.secret_key = md5(
+    str(datetime.now()).encode("utf-8"), usedforsecurity=False
+).hexdigest()
 
 
-def launch_for_local():
-    app.run(port=8000, debug=True)
+def launch_for_local(debug: bool = False) -> None:
+    app.run(port=8000, debug=debug)
+
+
+if __name__ == "__main__":
+    launch_for_local(debug=True)
