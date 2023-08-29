@@ -55,3 +55,9 @@ def post():
 def logout():
     session.pop("login")
     return redirect("/main/")
+
+@view.route("/test", methods=["GET"])
+def test():
+    session["login"] = True
+    session["name"] = "ネイター"
+    return redirect("/main/")
