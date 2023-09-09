@@ -231,7 +231,7 @@ class ChatGPT:
         system_content, user_content = content.split("------")
 
         completion = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
+            model="gpt-4",
             messages=[
                 {
                     "role": "system",
@@ -242,6 +242,7 @@ class ChatGPT:
                     "content": user_content.strip(),
                 },
             ],
+            temperature=0,
         )
         res = completion.choices[0].message.content
         self.logging(res)
