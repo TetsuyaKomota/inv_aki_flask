@@ -145,12 +145,16 @@ class ChatGPT:
             res = self.request_to_chatgpt(text)
             res = self.parse_answer(res)
             res["question"] = question
-            answer = res.get("answer", "")
-            if answer != "":
-                break
+            if res.get("answer", "") == "":
+                continue
+            if len(res.get("answer", "")) > 11:
+                # 選択肢以外の返答をしたらやり直し
+                continue
+            break
         else:
-            answer = "分からない"
+            res = {"answer": "分からない"}
 
+        answer = res.get("answer", "")
         self.logging("answer: " + answer)
 
         return answer, res
@@ -165,11 +169,13 @@ class ChatGPT:
         for _ in range(ChatGPT.JUDGE_MAX_RETRY):
             res = self.request_to_chatgpt(text)
             res = self.parse_judge(res)
-            answer = res.get("judge", "")
-            if answer != "":
-                break
+            if res.get("judge", "") == "":
+                continue
+            break
         else:
-            answer = "分からない"
+            res = {"judge": "分からない"}
+
+        answer = res.get("judge", "")
 
         if "同じものである" in answer:
             judge = "正解！"

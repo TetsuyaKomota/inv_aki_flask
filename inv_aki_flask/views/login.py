@@ -14,7 +14,6 @@ def show():
     name = session.get("name", "ネイター")
     return render_template(
         "login.html",
-        title="ログイン画面",
         err=False,
         message="名前を入力してください",
         name=name,
@@ -46,7 +45,6 @@ def post():
     else:
         return render_template(
             "login.html",
-            title="ログイン画面",
             err=False,
             message=msg,
             name=name,
