@@ -232,7 +232,8 @@ class ChatGPT:
         system_content, user_content = content.split("------")
 
         completion = openai.ChatCompletion.create(
-            model="gpt-4",
+            # model="gpt-4",
+            model="gpt-3.5-turbo",
             messages=[
                 {
                     "role": "system",
