@@ -85,7 +85,11 @@ def had_view_ad_in_session(session):
 
 
 def get_name(session):
-    return session.get("name", "")
+    return session.get("name", "ネイター")
+
+
+def set_name(session, name):
+    session["name"] = name
 
 
 def get_notice(session):
@@ -97,7 +101,8 @@ def set_notice(session, notice):
 
 
 def reset_sessionid(session):
-    del session["sessionid"]
+    if "sessionid" in session:
+        del session["sessionid"]
 
 
 def init_session(session, category, keyword):
@@ -111,6 +116,15 @@ def init_session(session, category, keyword):
 
 def is_login(session):
     return "login" in session and "name" in session
+
+
+def set_login(session):
+    session["login"] = True
+
+
+def set_logout(session):
+    if "login" in session:
+        del session["login"]
 
 
 def had_init_session(session):

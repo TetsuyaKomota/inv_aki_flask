@@ -1,5 +1,13 @@
 from flask import Blueprint, redirect, render_template, request, session
 
+from inv_aki_flask.model.inner_session import (
+    get_name,
+    is_login,
+    reset_sessionid,
+    set_login,
+    set_logout,
+    set_name,
+)
 from inv_aki_flask.model.secret_client import SecretClient
 
 view = Blueprint("login", __name__, url_prefix="/login")
@@ -11,7 +19,7 @@ login_pswd = secret_client.get_secret("login_pswd")
 
 @view.route("/", methods=["GET"])
 def show():
-    name = session.get("name", "ネイター")
+    name = get_name(session)
     return render_template(
         "login.html",
         err=False,
@@ -26,21 +34,21 @@ def post():
     # pswd = request.form.get("pass")
     pswd = login_pswd  # パスワードが必要な場合は修正
 
-    session["login"] = False
+    set_logout(session)
     if name == "":
         msg = "名前を入力してください"
     elif pswd != login_pswd:
         msg = "パスワードが違います"
     else:
-        session["login"] = True
+        set_login(session)
 
     # 名前を変更した際に，変更前の履歴が残っている場合は削除する
-    if "messages" in session and session.get("name", "") != name:
-        session.pop("messages")
+    if get_name(session) != name:
+        reset_sessionid(session)
 
-    session["name"] = name
+    set_name(session, name)
 
-    if session.get("login", False):
+    if is_login(session):
         return redirect("/main/")
     else:
         return render_template(
@@ -53,5 +61,5 @@ def post():
 
 @view.route("/logout", methods=["GET"])
 def logout():
-    session.pop("login")
+    set_logout(session)
     return redirect("/main/")
