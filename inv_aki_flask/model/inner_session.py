@@ -111,7 +111,7 @@ def set_message(session, msg, ans):
 
 def get_messages(session):
     if MESSAGES not in session:
-        session[MESSAGES] = init_message(session[NAME]).to_args()
+        session[MESSAGES] = init_message(get_name(session)).to_args()
     return DialogData(*session[MESSAGES])
 
 

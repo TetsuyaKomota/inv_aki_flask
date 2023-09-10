@@ -177,6 +177,11 @@
   <input type="submit" name="action" value="結果を記録する" class="btn btn-default">
  </form>
  {% endif %}
+ {% if is_same_session and judge_comment %}
+ <a href="https://twitter.com/intent/tweet?url=https://{{ request.host }}{{ url_for('ranking.show') }}/{{ sessionid }}&text={{ judge_comment }}" class="btn btn-default">
+  結果をツイートする
+ </a>
+ {% endif %}
 
  <p><a href="{{ url_for('ranking.show') }}">戻る</a></p>
 

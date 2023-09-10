@@ -4,6 +4,8 @@ from inv_aki_flask.model.datastore_client.message import client as message_entit
 from inv_aki_flask.model.datastore_client.report import client as report_entity_client
 from inv_aki_flask.model.datastore_client.session import client as session_entity_client
 from inv_aki_flask.model.inner_session import (
+    get_message_count,
+    get_messages,
     get_name,
     get_sessionid,
     is_judged_in_session,
@@ -23,11 +25,18 @@ def show(sessionid):
 
     thank = pop_thank(session)
 
+    if get_message_count(session) > 0:
+        dialog = get_messages(session)
+        judge_comment = dialog.get_latest_system_response()
+    else:
+        judge_comment = ""
+
     return render_template(
         "result.html",
         sessionid=sessionid,
         session_info=session_info,
         messages=messages,
+        judge_comment=judge_comment,
         is_same_session=is_same_session,
         thank=thank,
     )
