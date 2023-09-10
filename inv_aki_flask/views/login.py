@@ -3,7 +3,7 @@ from flask import Blueprint, redirect, render_template, request, session
 from inv_aki_flask.model.inner_session import (
     get_name,
     is_login,
-    reset_sessionid,
+    pop_sessionid,
     set_login,
     set_logout,
     set_name,
@@ -44,7 +44,7 @@ def post():
 
     # 名前を変更した際に，変更前の履歴が残っている場合は削除する
     if get_name(session) != name:
-        reset_sessionid(session)
+        pop_sessionid(session)
 
     set_name(session, name)
 

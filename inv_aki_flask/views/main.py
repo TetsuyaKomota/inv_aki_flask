@@ -19,7 +19,7 @@ from inv_aki_flask.model.inner_session import (
     is_judged_in_session,
     is_login,
     judged_in_session,
-    reset_sessionid,
+    pop_sessionid,
     set_message,
     set_notice,
     view_ad_in_session,
@@ -117,7 +117,7 @@ def post():
         return redirect(url_for("main.show"))
 
     if typ == "リセット":
-        reset_sessionid(session)
+        pop_sessionid(session)
         return redirect(url_for("main.show"))
 
     # comment が空の場合は警告出す

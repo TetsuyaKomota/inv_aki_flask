@@ -5,10 +5,86 @@ from flask import session
 
 from inv_aki_flask.model.dialog import DialogData
 
+# リセットごとに初期化が不要な情報
+INFO_KEYS = [
+    SESSION_ID := "sessionid",
+    LOGIN := "login",
+    NAME := "name",
+]
 
-def generate_sessionid(name: str) -> str:
-    text = f"{name}_{datetime.now()}"
-    return md5(text.encode("utf-8"), usedforsecurity=False).hexdigest()
+# リセットごとに初期化が必要な情報
+STATUS_KEYS = [
+    MESSAGES := "messages",
+    CATEGIRY := "category",
+    KEYWORD := "keyword",
+    JUDGED := "judged",
+    NOTICE := "notice",
+    VIEW_AD := "viewad",
+    THANK := "thank",
+]
+
+
+def get_sessionid(session):
+    return session.get(SESSION_ID, "")
+
+
+def pop_sessionid(session):
+    sessionid = get_sessionid(session)
+    if SESSION_ID in session:
+        del session[SESSION_ID]
+    return sessionid
+
+
+def init_sessionid(session):
+    name = get_name(session)
+    text = f"{name}_{datetime.now()}".encode("utf-8")
+    sessionid = md5(text, usedforsecurity=False).hexdigest()
+    session[SESSION_ID] = sessionid
+
+
+def init_session(session, category, keyword):
+    for k in STATUS_KEYS:
+        if k in session:
+            del session[k]
+    init_sessionid(session)
+    set_keyword(session, category, keyword)
+    return get_sessionid(session)
+
+
+def had_init_session(session):
+    return SESSION_ID in session
+
+
+def set_name(session, name):
+    session[NAME] = name
+
+
+def get_name(session):
+    return session.get(NAME, "ネイター")
+
+
+def set_login(session):
+    session[LOGIN] = True
+
+
+def set_logout(session):
+    if LOGIN in session:
+        del session[LOGIN]
+
+
+def is_login(session):
+    return LOGIN in session and NAME in session
+
+
+def set_keyword(session, category, keyword):
+    session[CATEGIRY] = category
+    session[KEYWORD] = keyword
+
+
+def get_keyword(session):
+    category = session.get(CATEGIRY, "")
+    keyword = session.get(KEYWORD, "")
+    return category, keyword
 
 
 def init_message(name: str) -> DialogData:
@@ -27,35 +103,16 @@ def init_message(name: str) -> DialogData:
     return message_data
 
 
-def init_sessionid(session):
-    session["sessionid"] = generate_sessionid(session["name"])
-
-
-def get_sessionid(session):
-    return session.get("sessionid", "")
-
-
-def set_keyword(session, category, keyword):
-    session["category"] = category
-    session["keyword"] = keyword
-
-
-def get_keyword(session):
-    category = session.get("category", "")
-    keyword = session.get("keyword", "")
-    return category, keyword
-
-
-def get_messages(session):
-    if "messages" not in session:
-        session["messages"] = init_message(session["name"]).to_args()
-    return DialogData(*session["messages"])
-
-
 def set_message(session, msg, ans):
     message_data = get_messages(session)
     message_data.add(msg, ans)
-    session["messages"] = message_data.to_args()
+    session[MESSAGES] = message_data.to_args()
+
+
+def get_messages(session):
+    if MESSAGES not in session:
+        session[MESSAGES] = init_message(session[NAME]).to_args()
+    return DialogData(*session[MESSAGES])
 
 
 def get_messageid(session):
@@ -69,74 +126,35 @@ def get_message_count(session):
 
 
 def judged_in_session(session):
-    session["judged"] = True
+    session[JUDGED] = True
 
 
 def is_judged_in_session(session):
-    return "judged" in session
+    return JUDGED in session
 
 
 def view_ad_in_session(session):
-    session["viewad"] = True
+    session[VIEW_AD] = True
 
 
 def had_view_ad_in_session(session):
-    return "viewad" in session
-
-
-def get_name(session):
-    return session.get("name", "ネイター")
-
-
-def set_name(session, name):
-    session["name"] = name
-
-
-def get_notice(session):
-    return session.get("notice", "")
+    return VIEW_AD in session
 
 
 def set_notice(session, notice):
-    session["notice"] = notice
+    session[NOTICE] = notice
 
 
-def reset_sessionid(session):
-    if "sessionid" in session:
-        del session["sessionid"]
-
-
-def init_session(session, category, keyword):
-    for k in ["messages", "category", "keyword", "judged", "notice", "viewad", "thank"]:
-        if k in session:
-            del session[k]
-    init_sessionid(session)
-    set_keyword(session, category, keyword)
-    return get_sessionid(session)
-
-
-def is_login(session):
-    return "login" in session and "name" in session
-
-
-def set_login(session):
-    session["login"] = True
-
-
-def set_logout(session):
-    if "login" in session:
-        del session["login"]
-
-
-def had_init_session(session):
-    return "sessionid" in session
+def get_notice(session):
+    return session.get(NOTICE, "")
 
 
 def set_thank(session, message):
-    session["thank"] = message
+    session[THANK] = message
 
 
 def pop_thank(session):
-    thank = session.get("thank", "")
-    if "thank" in session:
-        del session["thank"]
+    thank = session.get(THANK, "")
+    if THANK in session:
+        del session[THANK]
     return thank
