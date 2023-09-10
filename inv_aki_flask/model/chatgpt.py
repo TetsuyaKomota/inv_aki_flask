@@ -37,7 +37,8 @@ class ChatGPT:
         # True : 前もって作成したリストから選択
         # False: 毎回プロンプトでChatGPTから取得
         self.is_select_from_list = True
-        self.keyword_list = pd.read_csv("inv_aki_flask/lib/keyword_list.tsv", sep="\t")
+        # self.keyword_list = pd.read_csv("inv_aki_flask/lib/keyword_list.tsv", sep="\t")
+        self.keyword_list = pd.read_csv("inv_aki_flask/lib/keyword_list_easy.tsv", sep="\t")
 
     def set_api_key(self, api_key=None):
         self.is_active = False
