@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, session
+from flask import Blueprint, render_template
 
 from inv_aki_flask.model.datastore_client.session import client as session_entity_client
 

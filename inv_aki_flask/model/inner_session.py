@@ -106,7 +106,7 @@ def reset_sessionid(session):
 
 
 def init_session(session, category, keyword):
-    for k in ["messages", "category", "keyword", "judged", "notice", "viewad"]:
+    for k in ["messages", "category", "keyword", "judged", "notice", "viewad", "thank"]:
         if k in session:
             del session[k]
     init_sessionid(session)
@@ -129,3 +129,14 @@ def set_logout(session):
 
 def had_init_session(session):
     return "sessionid" in session
+
+
+def set_thank(session, message):
+    session["thank"] = message
+
+
+def pop_thank(session):
+    thank = session.get("thank", "")
+    if "thank" in session:
+        del session["thank"]
+    return thank
