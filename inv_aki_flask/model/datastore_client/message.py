@@ -17,7 +17,7 @@ class MessageEntityClient(DataStoreClient):
         reason2,
         reason3,
     ):
-        expiration = datetime.now() + timedelta(days=1)
+        expiration = datetime.now() + timedelta(days=7)
 
         self._upsert(
             kind=MessageEntityClient.KIND_MESSAGE,

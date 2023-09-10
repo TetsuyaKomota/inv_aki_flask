@@ -14,7 +14,7 @@ class SessionEntityClient(DataStoreClient):
     KEYID_SESSION_LIST = "v0.0.1"  # 全件検索用
 
     def create_session_entity(self, sessionid, category, keyword):
-        expiration = datetime.now() + timedelta(days=1)
+        expiration = datetime.now() + timedelta(days=7)
         self._upsert(
             kind=SessionEntityClient.KIND_SESSION,
             keyid=sessionid,

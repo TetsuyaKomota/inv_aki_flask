@@ -21,6 +21,10 @@ def show(sessionid):
     session_info = session_entity_client.get_session(sessionid=sessionid)
     messages = message_entity_client.get_messages(sessionid=sessionid)
 
+    if session_info is None:
+        # 既に削除されている場合は，メイン画面に遷移する
+        return redirect(url_for("main.show"))
+
     is_same_session = sessionid == get_sessionid(session)
 
     thank = pop_thank(session)
