@@ -1,25 +1,33 @@
 <!docstyle html>
 <html lang="ja">
-    <head>
-        <meta charset="utf-8" />
-        <meta name="color-scheme" content="light" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-        <link rel="stylesheet" href="/static/css/style.css">
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9477808264416318"
-            crossorigin="anonymous"></script>
-        <title>{% block title %}{% endblock %}</title>
-        {% block header %}{% endblock %}
-    </head>
-    <body>
-        <h1>{% block headline %}{% endblock %}</h1>
-        {% block content %}{% endblock %}
+ <head>
+  <meta charset="utf-8" />
+  <meta name="color-scheme" content="light" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/static/css/style.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9477808264416318"
+   crossorigin="anonymous"></script>
+  <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+  <title>逆アキネイター - {% block title %}{% endblock %}</title>
+  {% block header %}{% endblock %}
+ </head>
+ <body>
+  <h1>{% block headline %}{% endblock %}</h1>
+  {% block content %}{% endblock %}
 
-        <div class="footer">
-          {% block footer %}{% endblock %}
-          copyright 2023 tkomota
-        </div>
-    </body>
+  <div class="footer">
+   {% block footer %}{% endblock %}
+   <a 
+    href="https://twitter.com/share?ref_src=twsrc%5Etfw" 
+    class="twitter-share-button" 
+    data-text="",
+    data-show-count="false">
+     Tweetボタン
+   </a>
+   copyright 2023 tkomota
+  </div>
+ </body>
 </html>

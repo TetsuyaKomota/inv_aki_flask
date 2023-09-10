@@ -24,6 +24,14 @@ class DialogData:
         count = len(self.dialog)
         self.dialog.append((player_msg, system_msg, count))
 
+    def get_latest_system_response(self) -> Optional[str]:
+        if len(self.dialog) == 0:
+            return None
+        latest_msg = self.dialog[-1]
+        latest_system_msg = latest_msg[1]
+        res = latest_system_msg[1]
+        return " ".join(res.split("\n"))
+
     def to_args(self) -> tuple[str, str, list[QAData]]:
         return (self.player_name, self.system_name, self.dialog)
 
