@@ -37,7 +37,8 @@ class ChatGPT:
         # True : 前もって作成したリストから選択
         # False: 毎回プロンプトでChatGPTから取得
         self.is_select_from_list = True
-        self.keyword_list = pd.read_csv("inv_aki_flask/lib/keyword_list.tsv", sep="\t")
+        # self.keyword_list = pd.read_csv("inv_aki_flask/lib/keyword_list.tsv", sep="\t")
+        self.keyword_list = pd.read_csv("inv_aki_flask/lib/keyword_list_easy.tsv", sep="\t")
 
     def set_api_key(self, api_key=None):
         self.is_active = False
@@ -231,6 +232,7 @@ class ChatGPT:
         system_content, user_content = content.split("------")
 
         completion = openai.ChatCompletion.create(
+            # model="gpt-4",
             model="gpt-3.5-turbo",
             messages=[
                 {
@@ -242,6 +244,7 @@ class ChatGPT:
                     "content": user_content.strip(),
                 },
             ],
+            temperature=0,
         )
         res = completion.choices[0].message.content
         self.logging(res)
