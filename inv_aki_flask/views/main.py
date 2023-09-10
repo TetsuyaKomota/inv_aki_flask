@@ -1,15 +1,32 @@
 import os
-from datetime import datetime
-from hashlib import md5
 
 from flask import Blueprint, redirect, render_template, request, session, url_for
 
 from inv_aki_flask.model.chatgpt import MAX_QUESTIONS, ChatGPT
 from inv_aki_flask.model.datastore_client.message import client as message_entity_client
 from inv_aki_flask.model.datastore_client.session import client as session_entity_client
-from inv_aki_flask.model.dialog import DialogData
+from inv_aki_flask.model.inner_session import (
+    get_keyword,
+    get_message_count,
+    get_messageid,
+    get_messages,
+    get_name,
+    get_notice,
+    get_sessionid,
+    had_init_session,
+    had_view_ad_in_session,
+    init_session,
+    is_judged_in_session,
+    is_login,
+    judged_in_session,
+    reset_sessionid,
+    set_message,
+    set_notice,
+    view_ad_in_session,
+)
 
 view = Blueprint("main", __name__, url_prefix="/main")
+
 
 if os.path.exists("tmp/api_key.txt"):
     with open("tmp/api_key.txt", "r") as f:
@@ -19,18 +36,13 @@ else:
     model = ChatGPT()
 
 
-def generate_sessionid(name: str) -> str:
-    text = f"{name}_{datetime.now()}"
-    return md5(text.encode("utf-8"), usedforsecurity=False).hexdigest()
-
-
-def put_session(sessionid: str, category: str, keyword: str) -> None:
+def put_session_entity(sessionid: str, category: str, keyword: str) -> None:
     session_entity_client.create_session_entity(
         sessionid, category=category, keyword=keyword
     )
 
 
-def put_message(res: dict[str, str], sessionid: str, messageid: str) -> None:
+def put_message_entity(res: dict[str, str], sessionid: str, messageid: str) -> None:
     message_entity_client.create_message_entity(
         sessionid=sessionid,
         messageid=messageid,
@@ -42,62 +54,45 @@ def put_message(res: dict[str, str], sessionid: str, messageid: str) -> None:
     )
 
 
-def init_message(name: str) -> DialogData:
-    msg = "\n".join(
-        [
-            "有名な人物やキャラクターを思い浮かべて．",
-            "魔人が誰でも当てて見せよう．",
-        ]
-    )
-
-    ans = "よーし，やってみるぞー"
-
-    message_data = DialogData(player_name=f"アキ{name}", system_name="ChatGPT")
-    message_data.add(msg, ans)
-
-    return message_data
-
-
 @view.route("/", methods=["GET"])
 def show():
-    if "login" not in session or "name" not in session:
+    if not is_login(session):
         return redirect(url_for("login.show"))
 
-    if "messages" not in session:
-        session["messages"] = init_message(session["name"]).to_args()
+    if not had_init_session(session):
+        category, keyword = model.select_keyword()
+        sessionid = init_session(session, category, keyword)
+        put_session_entity(sessionid, category=category, keyword=keyword)
+
+    message_data = get_messages(session)
+    ans_count = get_message_count(session)
+
+    if ans_count == 0:
         input_text = "漫画やアニメに登場する？"
     else:
         input_text = ""
 
-    if "keyword" not in session:
-        category, keyword = model.select_keyword()
-        session["category"] = category
-        session["keyword"] = keyword
-        session["sessionid"] = generate_sessionid(session["name"])
-        put_session(session["sessionid"], category=category, keyword=keyword)
+    judged = is_judged_in_session(session)
 
-    message_data = DialogData(*session["messages"])
-    judged = "judged" in session
+    notice = get_notice(session)
 
-    msg = f"Login ID: {session['name']}"
+    viewad = had_view_ad_in_session(session)
 
-    notice = session.get("notice", "")
-
-    viewad = session.get("viewad", False)
-    ans_count = len(message_data) - 1  # 最初のセリフ分
     if viewad:
         max_count = MAX_QUESTIONS * 3
+        ad_disabled = "disabled"
     else:
         max_count = MAX_QUESTIONS
+        ad_disabled = ""
 
     return render_template(
         "main.html",
         title="逆アキネイター",
-        message=msg,
+        name=get_name(session),
         data=message_data,
         ans_count=ans_count,
         max_count=max_count,
-        ad_disabled="disabled" if viewad else "",
+        ad_disabled=ad_disabled,
         judged=judged,
         input_text=input_text,
         notice=notice,
@@ -106,25 +101,23 @@ def show():
 
 @view.route("/", methods=["POST"])
 def post():
-    if "login" not in session or "name" not in session:
+    if not is_login(session):
         return redirect(url_for("login.show"))
 
     msg = request.form.get("comment")
     typ = request.form.get("action")
 
-    sessionid = session.get("sessionid", "")
+    sessionid = get_sessionid(session)
 
     if typ == "答え合わせする":
         return redirect(url_for("result.show", sessionid=sessionid))
 
     if typ == "広告を視聴して質問回数を増やす":
-        session["viewad"] = True
+        view_ad_in_session(session)
         return redirect(url_for("main.show"))
 
     if typ == "リセット":
-        for k in ["messages", "category", "keyword", "judged", "notice", "viewad"]:
-            if k in session:
-                del session[k]
+        reset_sessionid(session)
         return redirect(url_for("main.show"))
 
     # comment が空の場合は警告出す
@@ -133,30 +126,24 @@ def post():
             target = "質問"
         elif typ == "回答する":
             target = "キーワード"
-        session["notice"] = f"{target}を入力してください"
+        set_notice(session, f"{target}を入力してください")
         return redirect(url_for("main.show"))
     else:
-        if "notice" in session:
-            del session["notice"]
+        set_notice(session, "")
 
-    if "messages" not in session:
-        session["messages"] = init_message(session["name"]).to_args()
-
-    message_data = DialogData(*session["messages"])
-
-    category = session.get("category", "")
-    keyword = session.get("keyword", "")
-    messageid = len(message_data)
+    messageid = get_messageid(session)
+    category, keyword = get_keyword(session)
 
     if typ == "質問する":
         ans, res = model.ask_answer(msg, category, keyword)
-        put_message(res, sessionid, messageid)
+        put_message_entity(res, sessionid, messageid)
 
     elif typ == "回答する":
-        session["judged"] = True
+        judged_in_session(session)
         ans, res = model.judge(msg, category, keyword)
 
         answer = msg
+        ans_count = get_message_count(session)
         explain1 = res.get("explain1", None)
         explain2 = res.get("explain2", None)
         reason = res.get("reason", None)
@@ -164,7 +151,7 @@ def post():
 
         session_entity_client.update_session_entity(
             sessionid=sessionid,
-            count=messageid - 1,  # 最初のセリフ分
+            count=ans_count,
             answer=answer,
             explain1=explain1,
             explain2=explain2,
@@ -172,8 +159,6 @@ def post():
             judge=judge,
         )
 
-    message_data.add(msg, ans)
-
-    session["messages"] = message_data.to_args()
+    set_message(session, msg, ans)
 
     return redirect(url_for("main.show"))
